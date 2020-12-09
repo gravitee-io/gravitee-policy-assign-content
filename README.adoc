@@ -1,4 +1,4 @@
-= Assign Content Policy
+= Assign content policy
 
 ifdef::env-github[]
 image:https://ci.gravitee.io/buildStatus/icon?job=gravitee-io/gravitee-policy-assign-content/master["Build status", link="https://ci.gravitee.io/buildStatus/icon?job=gravitee-io/gravitee-policy-assign-content/master/"]
@@ -20,59 +20,13 @@ endif::[]
 
 == Description
 
-The `assign content` policy is used to change and / or transform the content of the request body or response body.
+You can use the `assign-content` policy to change or transform the content of the request body or response body.
 
-This policy is compatible with https://freemarker.apache.org[Freemarker] template engine which allows you to apply
-complex transformation like moving from XML to JSON and vice-versa.
+This policy is compatible with the https://freemarker.apache.org[Freemarker^] template engine, which allows you to apply
+complex transformations, such as transforming from XML to JSON and vice versa.
 
-By default, you can access multiple object from the template context: request or response body, dictionaries, context
-attributes, ...
-
-[source, json]
-.Inject a dictionary value and the application into the request payload
-----
-{
-  "example": "${context.dictionaries['my-dictionary']['my-value']}",
-  "application": "${context.attributes['application']}"
-}
-----
-
-If you're looking for default attributes, you can have a look to expression language documentation: https://docs.gravitee.io/apim_publisherguide_expression_language.html#attributes
-
-[source, json]
-.Incoming request body content
-----
-{
-  "symbol": "EUR"
-}
-----
-
-[source, xml]
-.Policy example to transform from json to xml
-----
-<#assign body = request.content?eval >
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:web="http://www.webserviceX.NET/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <web:GetQuote>
-         ${body.symbol}
-      </web:GetQuote>
-   </soapenv:Body>
-</soapenv:Envelope>
-----
-
-[source, xml]
-.Expected output
-----
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:web="http://www.webserviceX.NET/">
- <soapenv:Header/>
- <soapenv:Body>
- <web:GetQuote>
- EUR
- </web:GetQuote>
- </soapenv:Body>
-</soapenv:Envelope>
-----
+By default, you can access multiple objects from the template context -- request and response bodies, dictionaries, context
+attributes and more.
 
 == Configuration
 
@@ -81,13 +35,13 @@ If you're looking for default attributes, you can have a look to expression lang
 
 .^|scope
 ^.^|X
-|The scope for which the policy must be executed.
+|The execution scope of the policy.
 ^.^|scope
 ^.^|REQUEST
 
 .^|body
 ^.^|X
-|The data to push as content of the request or response body.
+|The data to push as request or response body content.
 ^.^|string
 ^.^|-
 
@@ -102,12 +56,68 @@ If you're looking for default attributes, you can have a look to expression lang
 }
 ----
 
-== Http Status Code
+== Examples
+
+=== Inject a dictionary value and the application into the request payload
+
+[source, json]
+----
+{
+  "example": "${context.dictionaries['my-dictionary']['my-value']}",
+  "application": "${context.attributes['application']}"
+}
+----
+
+TIP: You can find more information about default attributes in the Expression Language documentation in the *API Publisher Guide*.
+
+=== Incoming request body content
+
+[source, json]
+----
+{
+  "symbol": "EUR"
+}
+----
+
+=== Policy example to transform from JSON to XML
+
+Input:
+
+[source, xml]
+----
+<#assign body = request.content?eval >
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:web="http://www.webserviceX.NET/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <web:GetQuote>
+         ${body.symbol}
+      </web:GetQuote>
+   </soapenv:Body>
+</soapenv:Envelope>
+----
+
+Expected output:
+
+[source, xml]
+----
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:web="http://www.webserviceX.NET/">
+ <soapenv:Header/>
+ <soapenv:Body>
+ <web:GetQuote>
+ EUR
+ </web:GetQuote>
+ </soapenv:Body>
+</soapenv:Envelope>
+----
+
+== Errors
+
+=== HTTP status code
 
 |===
 |Code |Message
 
 .^| ```500```
-| The body content can not be transformed.
+| The body content cannot be transformed.
 
 |===
