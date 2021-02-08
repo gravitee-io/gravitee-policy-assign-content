@@ -18,6 +18,7 @@ package io.gravitee.policy.assigncontent;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.core.TemplateClassResolver;
 import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapperBuilder;
 import freemarker.template.Template;
 import freemarker.template.TemplateExceptionHandler;
 import io.gravitee.gateway.api.ExecutionContext;
@@ -33,6 +34,7 @@ import io.gravitee.policy.api.annotations.OnRequestContent;
 import io.gravitee.policy.api.annotations.OnResponseContent;
 import io.gravitee.policy.assigncontent.configuration.AssignContentPolicyConfiguration;
 import io.gravitee.policy.assigncontent.configuration.PolicyScope;
+import io.gravitee.policy.assigncontent.freemarker.LegacyDefaultMemberAccessPolicy;
 import io.gravitee.policy.assigncontent.utils.AttributesBasedExecutionContext;
 import io.gravitee.policy.assigncontent.utils.ContentAwareRequest;
 import io.gravitee.policy.assigncontent.utils.ContentAwareResponse;
@@ -62,7 +64,7 @@ public class AssignContentPolicy {
     }
 
     @OnRequestContent
-    public ReadWriteStream onRequestContent(Request request, ExecutionContext executionContext, PolicyChain policyChain) {
+    public ReadWriteStream<Buffer> onRequestContent(Request request, ExecutionContext executionContext, PolicyChain policyChain) {
         if (configuration.getScope() == PolicyScope.REQUEST) {
             return TransformableRequestStreamBuilder
                     .on(request)
@@ -88,7 +90,7 @@ public class AssignContentPolicy {
     }
 
     @OnResponseContent
-    public ReadWriteStream onResponseContent(Response response, ExecutionContext executionContext, PolicyChain policyChain) {
+    public ReadWriteStream<Buffer> onResponseContent(Response response, ExecutionContext executionContext, PolicyChain policyChain) {
         if (configuration.getScope() == PolicyScope.RESPONSE) {
         return TransformableResponseStreamBuilder
                 .on(response)
@@ -114,15 +116,25 @@ public class AssignContentPolicy {
     }
 
     private static Configuration loadConfiguration() {
-        Configuration configuration = new Configuration(Configuration.VERSION_2_3_27);
+        Configuration configuration = new Configuration(Configuration.VERSION_2_3_30);
         configuration.setDefaultEncoding(Charset.defaultCharset().name());
-        configuration.setNewBuiltinClassResolver(TemplateClassResolver.SAFER_RESOLVER);
+        configuration.setNewBuiltinClassResolver(TemplateClassResolver.ALLOWS_NOTHING_RESOLVER);
         configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+
+        // Ensure default value is false
+        configuration.setAPIBuiltinEnabled(false);
+
+        final DefaultObjectWrapperBuilder objectWrapperBuilder = new DefaultObjectWrapperBuilder(Configuration.VERSION_2_3_30);
+        objectWrapperBuilder.setMemberAccessPolicy(LegacyDefaultMemberAccessPolicy.INSTANCE);
+        configuration.setObjectWrapper(objectWrapperBuilder.build());
+
+        // Load inline templates
         configuration.setTemplateLoader(new StringTemplateLoader());
+
         return configuration;
     }
 
-    private Template getTemplate(String template) throws IOException {
+    Template getTemplate(String template) throws IOException {
         StringTemplateLoader loader = (StringTemplateLoader) templateConfiguration.getTemplateLoader();
         String hash = Sha1.sha1(template);
         Object source = loader.findTemplateSource(hash);
