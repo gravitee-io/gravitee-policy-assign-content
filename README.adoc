@@ -28,6 +28,10 @@ complex transformations, such as transforming from XML to JSON and vice versa.
 By default, you can access multiple objects from the template context -- request and response bodies, dictionaries, context
 attributes and more.
 
+=== Policy identifier
+
+You can enable or disable the policy with policy identifier `policy-assign-content`.
+
 == Configuration
 
 |===
