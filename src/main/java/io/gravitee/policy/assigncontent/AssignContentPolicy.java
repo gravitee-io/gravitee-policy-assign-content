@@ -34,6 +34,7 @@ import io.gravitee.policy.api.annotations.OnRequestContent;
 import io.gravitee.policy.api.annotations.OnResponseContent;
 import io.gravitee.policy.assigncontent.configuration.AssignContentPolicyConfiguration;
 import io.gravitee.policy.assigncontent.configuration.PolicyScope;
+import io.gravitee.policy.assigncontent.freemarker.CustomTemplateLoader;
 import io.gravitee.policy.assigncontent.freemarker.LegacyDefaultMemberAccessPolicy;
 import io.gravitee.policy.assigncontent.utils.AttributesBasedExecutionContext;
 import io.gravitee.policy.assigncontent.utils.ContentAwareRequest;
@@ -52,7 +53,8 @@ import java.util.Map;
  */
 public class AssignContentPolicy {
 
-    private static Configuration templateConfiguration = loadConfiguration();
+    private static final CustomTemplateLoader templateLoader = new CustomTemplateLoader();
+    private static final Configuration templateConfiguration = loadConfiguration();
 
     /**
      * SOAP transformer templateConfiguration
@@ -129,19 +131,14 @@ public class AssignContentPolicy {
         configuration.setObjectWrapper(objectWrapperBuilder.build());
 
         // Load inline templates
-        configuration.setTemplateLoader(new StringTemplateLoader());
+        configuration.setTemplateLoader(templateLoader);
 
         return configuration;
     }
 
     Template getTemplate(String template) throws IOException {
-        StringTemplateLoader loader = (StringTemplateLoader) templateConfiguration.getTemplateLoader();
         String hash = Sha1.sha1(template);
-        Object source = loader.findTemplateSource(hash);
-        if (source == null) {
-            loader.putTemplate(hash, template);
-        }
-
+        templateLoader.putIfAbsent(hash, template);
         return templateConfiguration.getTemplate(hash);
     }
 }
