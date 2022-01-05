@@ -15,7 +15,6 @@
  */
 package io.gravitee.policy.assigncontent.utils;
 
-import io.gravitee.common.http.HttpHeaders;
 import io.gravitee.gateway.api.Response;
 
 /**
@@ -36,8 +35,8 @@ public class ContentAwareResponse {
         return response.status();
     }
 
-    public HttpHeaders getHeaders() {
-        return response.headers();
+    public HeaderMapAdapter getHeaders() {
+        return new HeaderMapAdapter(response.headers());
     }
 
     public String getContent() {
