@@ -15,7 +15,6 @@
  */
 package io.gravitee.policy.assigncontent;
 
-import io.gravitee.common.http.HttpHeaders;
 import io.gravitee.common.http.HttpStatusCode;
 import io.gravitee.common.util.ServiceLoaderHelper;
 import io.gravitee.gateway.api.ExecutionContext;
@@ -23,7 +22,7 @@ import io.gravitee.gateway.api.Request;
 import io.gravitee.gateway.api.Response;
 import io.gravitee.gateway.api.buffer.Buffer;
 import io.gravitee.gateway.api.buffer.BufferFactory;
-import io.gravitee.gateway.api.handler.Handler;
+import io.gravitee.gateway.api.http.HttpHeaders;
 import io.gravitee.gateway.api.stream.ReadWriteStream;
 import io.gravitee.policy.api.PolicyChain;
 import io.gravitee.policy.api.PolicyResult;
@@ -69,10 +68,46 @@ public class AssignContentPolicyTest {
 
     @Before
     public void beforeAll() {
-        HttpHeaders headers = spy(new HttpHeaders());
+        when(request.headers()).thenReturn(HttpHeaders.create());
+        when(request.metrics()).thenReturn(metrics);
+    }
+
+    @Test
+    public void shouldContinueRequestStreaming_templateHeaders() {
+        HttpHeaders headers = HttpHeaders.create()
+                        .set("my-header", "header-value");
 
         when(request.headers()).thenReturn(headers);
-        when(request.metrics()).thenReturn(metrics);
+
+        when(configuration.getBody()).thenReturn("${request.headers['my-header']}");
+        when(configuration.getScope()).thenReturn(PolicyScope.REQUEST);
+
+        Buffer buffer = factory.buffer("{\"name\":1}");
+        ReadWriteStream<Buffer> stream = new AssignContentPolicy(configuration).onRequestContent(request, context, chain);
+        stream.bodyHandler(buffer1 -> Assert.assertEquals("header-value", buffer1.toString()));
+
+        stream.end(buffer);
+
+        verify(chain,times(1)).streamFailWith(any(PolicyResult.class));
+    }
+
+    @Test
+    public void shouldContinueRequestStreaming_templateHeadersIndexed() {
+        HttpHeaders headers = HttpHeaders.create()
+                .set("my-header", "header-value");
+
+        when(request.headers()).thenReturn(headers);
+
+        when(configuration.getBody()).thenReturn("${request.headers['my-header'][0]}");
+        when(configuration.getScope()).thenReturn(PolicyScope.REQUEST);
+
+        Buffer buffer = factory.buffer("{\"name\":1}");
+        ReadWriteStream<Buffer> stream = new AssignContentPolicy(configuration).onRequestContent(request, context, chain);
+        stream.bodyHandler(buffer1 -> Assert.assertEquals("header-value", buffer1.toString()));
+
+        stream.end(buffer);
+
+        verify(chain, never()).streamFailWith(any(PolicyResult.class));
     }
 
     @Test
