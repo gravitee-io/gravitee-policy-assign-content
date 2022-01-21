@@ -22,7 +22,7 @@
 
     <groupId>io.gravitee.policy</groupId>
     <artifactId>gravitee-policy-assign-content</artifactId>
-    <version>1.7.0-SNAPSHOT</version>
+    <version>1.7.0</version>
 
     <name>Gravitee.io APIM - Policy - Assign content</name>
     <description>Description of the Assign content Policy</description>
@@ -42,6 +42,8 @@
         <freemarker.version>2.3.31</freemarker.version>
         <guava.version>30.1.1-jre</guava.version>
         <maven-assembly-plugin.version>2.5.5</maven-assembly-plugin.version>
+        <!-- Property used by the publication job in CI-->
+        <publish-folder-path>graviteeio-apim/plugins/policies</publish-folder-path>
     </properties>
 
     <dependencyManagement>
