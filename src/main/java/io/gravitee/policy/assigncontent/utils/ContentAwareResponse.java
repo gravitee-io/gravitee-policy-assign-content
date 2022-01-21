@@ -28,7 +28,7 @@ public class ContentAwareResponse {
 
     public ContentAwareResponse(Response response, String content) {
         this.response = response;
-        this.content =content;
+        this.content = content;
     }
 
     public int getStatus() {

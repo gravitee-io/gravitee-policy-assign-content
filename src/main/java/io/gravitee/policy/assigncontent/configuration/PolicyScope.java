@@ -21,5 +21,5 @@ package io.gravitee.policy.assigncontent.configuration;
  */
 public enum PolicyScope {
     REQUEST,
-    RESPONSE
+    RESPONSE,
 }

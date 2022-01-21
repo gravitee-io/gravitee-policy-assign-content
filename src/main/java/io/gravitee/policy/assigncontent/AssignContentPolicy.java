@@ -40,7 +40,6 @@ import io.gravitee.policy.assigncontent.utils.AttributesBasedExecutionContext;
 import io.gravitee.policy.assigncontent.utils.ContentAwareRequest;
 import io.gravitee.policy.assigncontent.utils.ContentAwareResponse;
 import io.gravitee.policy.assigncontent.utils.Sha1;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
@@ -69,23 +68,22 @@ public class AssignContentPolicy {
     public ReadWriteStream<Buffer> onRequestContent(Request request, ExecutionContext executionContext, PolicyChain policyChain) {
         if (configuration.getScope() == PolicyScope.REQUEST) {
             return TransformableRequestStreamBuilder
-                    .on(request)
-                    .chain(policyChain)
-                    .transform(
-                            buffer -> {
-                                try {
-                                    Template template = getTemplate(configuration.getBody());
-                                    StringWriter writer = new StringWriter();
-                                    Map<String, Object> model = new HashMap<>();
-                                    model.put("request", new ContentAwareRequest(request, buffer.toString()));
-                                    model.put("context", new AttributesBasedExecutionContext(executionContext));
-                                    template.process(model, writer);
-                                    return Buffer.buffer(writer.toString());
-                                } catch (Exception ioe) {
-                                    throw new TransformationException("Unable to assign body content: " + ioe.getMessage(), ioe);
-                                }
-                            }
-                    ).build();
+                .on(request)
+                .chain(policyChain)
+                .transform(buffer -> {
+                    try {
+                        Template template = getTemplate(configuration.getBody());
+                        StringWriter writer = new StringWriter();
+                        Map<String, Object> model = new HashMap<>();
+                        model.put("request", new ContentAwareRequest(request, buffer.toString()));
+                        model.put("context", new AttributesBasedExecutionContext(executionContext));
+                        template.process(model, writer);
+                        return Buffer.buffer(writer.toString());
+                    } catch (Exception ioe) {
+                        throw new TransformationException("Unable to assign body content: " + ioe.getMessage(), ioe);
+                    }
+                })
+                .build();
         }
 
         return null;
@@ -94,24 +92,23 @@ public class AssignContentPolicy {
     @OnResponseContent
     public ReadWriteStream<Buffer> onResponseContent(Response response, ExecutionContext executionContext, PolicyChain policyChain) {
         if (configuration.getScope() == PolicyScope.RESPONSE) {
-        return TransformableResponseStreamBuilder
+            return TransformableResponseStreamBuilder
                 .on(response)
                 .chain(policyChain)
-                .transform(
-                        buffer -> {
-                            try {
-                                Template template = getTemplate(configuration.getBody());
-                                StringWriter writer = new StringWriter();
-                                Map<String, Object> model = new HashMap<>();
-                                model.put("response", new ContentAwareResponse(response, buffer.toString()));
-                                model.put("context", new AttributesBasedExecutionContext(executionContext));
-                                template.process(model, writer);
-                                return Buffer.buffer(writer.toString());
-                            } catch (Exception ioe) {
-                                throw new TransformationException("Unable to assign body content: " + ioe.getMessage(), ioe);
-                            }
-                        }
-                ).build();
+                .transform(buffer -> {
+                    try {
+                        Template template = getTemplate(configuration.getBody());
+                        StringWriter writer = new StringWriter();
+                        Map<String, Object> model = new HashMap<>();
+                        model.put("response", new ContentAwareResponse(response, buffer.toString()));
+                        model.put("context", new AttributesBasedExecutionContext(executionContext));
+                        template.process(model, writer);
+                        return Buffer.buffer(writer.toString());
+                    } catch (Exception ioe) {
+                        throw new TransformationException("Unable to assign body content: " + ioe.getMessage(), ioe);
+                    }
+                })
+                .build();
         }
 
         return null;

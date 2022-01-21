@@ -15,6 +15,9 @@
  */
 package io.gravitee.policy.assigncontent;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
+
 import io.gravitee.common.http.HttpStatusCode;
 import io.gravitee.common.util.ServiceLoaderHelper;
 import io.gravitee.gateway.api.ExecutionContext;
@@ -36,9 +39,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
 
 /**
  * @author David BRASSELY (david.brassely at graviteesource.com)
@@ -74,8 +74,7 @@ public class AssignContentPolicyTest {
 
     @Test
     public void shouldContinueRequestStreaming_templateHeaders() {
-        HttpHeaders headers = HttpHeaders.create()
-                        .set("my-header", "header-value");
+        HttpHeaders headers = HttpHeaders.create().set("my-header", "header-value");
 
         when(request.headers()).thenReturn(headers);
 
@@ -88,13 +87,12 @@ public class AssignContentPolicyTest {
 
         stream.end(buffer);
 
-        verify(chain,times(1)).streamFailWith(any(PolicyResult.class));
+        verify(chain, times(1)).streamFailWith(any(PolicyResult.class));
     }
 
     @Test
     public void shouldContinueRequestStreaming_templateHeadersIndexed() {
-        HttpHeaders headers = HttpHeaders.create()
-                .set("my-header", "header-value");
+        HttpHeaders headers = HttpHeaders.create().set("my-header", "header-value");
 
         when(request.headers()).thenReturn(headers);
 
@@ -171,7 +169,9 @@ public class AssignContentPolicyTest {
 
     @Test
     public void shouldNotContinueRequestStreaming_apiDisabled() {
-        when(configuration.getBody()).thenReturn("<#assign uri=object?api.class.getResource(\"/\").toURI()>\n" +
+        when(configuration.getBody())
+            .thenReturn(
+                "<#assign uri=object?api.class.getResource(\"/\").toURI()>\n" +
                 "<#assign input=uri?api.create(\"file:///etc/passwd\").toURL().openConnection()>\n" +
                 "<#assign is=input?api.getInputStream()>\n" +
                 "            FILE:[<#list 0..999999999 as _>\n" +
@@ -179,7 +179,8 @@ public class AssignContentPolicyTest {
                 "    <#if byte == -1>\n" +
                 "        <#break>\n" +
                 "    </#if>\n" +
-                "    ${byte}, </#list>]");
+                "    ${byte}, </#list>]"
+            );
         when(configuration.getScope()).thenReturn(PolicyScope.REQUEST);
 
         Buffer buffer = factory.buffer("{\"name\":1}");
@@ -191,6 +192,4 @@ public class AssignContentPolicyTest {
         PolicyResult value = policyResult.getValue();
         assertThat(value.statusCode()).isEqualTo(HttpStatusCode.INTERNAL_SERVER_ERROR_500);
     }
-
-
 }

@@ -16,7 +16,6 @@
 package io.gravitee.policy.assigncontent.utils;
 
 import io.gravitee.gateway.api.ExecutionContext;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +25,7 @@ import java.util.Map;
  */
 public class AttributesBasedExecutionContext {
 
-    private final static String CONTEXT_DICTIONARIES_VARIABLE = "dictionaries";
+    private static final String CONTEXT_DICTIONARIES_VARIABLE = "dictionaries";
     private final ExecutionContext context;
     private final Map<String, Object> attributes = new AttributeMap();
 
@@ -35,8 +34,9 @@ public class AttributesBasedExecutionContext {
     }
 
     public Map<String, Map<String, String>> getDictionaries() {
-        return (Map<String, Map<String, String>>)
-                this.context.getTemplateEngine().getTemplateContext().lookupVariable(CONTEXT_DICTIONARIES_VARIABLE);
+        return (Map<String, Map<String, String>>) this.context.getTemplateEngine()
+            .getTemplateContext()
+            .lookupVariable(CONTEXT_DICTIONARIES_VARIABLE);
     }
 
     public Object getAttributes() {
@@ -45,12 +45,11 @@ public class AttributesBasedExecutionContext {
 
     private class AttributeMap extends HashMap<String, Object> {
 
-        AttributeMap() { }
+        AttributeMap() {}
 
         @Override
         public Object get(Object key) {
             return context.getAttribute((String) key);
         }
     }
-
 }
