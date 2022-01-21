@@ -15,14 +15,13 @@
  */
 package io.gravitee.policy.assigncontent.freemarker;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import freemarker.cache.TemplateLoader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.time.Duration;
 import java.util.Objects;
-
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import freemarker.cache.TemplateLoader;
 
 public class CustomTemplateLoader implements TemplateLoader {
 
@@ -36,17 +35,18 @@ public class CustomTemplateLoader implements TemplateLoader {
      */
     private static final int CACHE_MAXIMUM_SIZE = 1000;
 
-    private final Cache<Object, Object> templates = CacheBuilder.newBuilder()
-            .maximumSize(CACHE_MAXIMUM_SIZE)
-            .expireAfterAccess(Duration.ofHours(CACHE_EXPIRATION_HOURS)).build();
+    private final Cache<Object, Object> templates = CacheBuilder
+        .newBuilder()
+        .maximumSize(CACHE_MAXIMUM_SIZE)
+        .expireAfterAccess(Duration.ofHours(CACHE_EXPIRATION_HOURS))
+        .build();
 
     Cache<Object, Object> getCache() {
         return templates;
     }
 
     @Override
-    public void closeTemplateSource(Object templateSource) {
-    }
+    public void closeTemplateSource(Object templateSource) {}
 
     @Override
     public Object findTemplateSource(String name) {
@@ -70,6 +70,7 @@ public class CustomTemplateLoader implements TemplateLoader {
     }
 
     private static class TemplateSource {
+
         private final String name;
         private final String templateContent;
         private final long lastModified;

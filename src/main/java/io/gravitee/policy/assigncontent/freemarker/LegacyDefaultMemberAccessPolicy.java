@@ -18,7 +18,6 @@ package io.gravitee.policy.assigncontent.freemarker;
 import freemarker.ext.beans.ClassMemberAccessPolicy;
 import freemarker.ext.beans.MemberAccessPolicy;
 import freemarker.template.utility.ClassUtil;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -45,8 +44,7 @@ public final class LegacyDefaultMemberAccessPolicy implements MemberAccessPolicy
             for (Object key : props.keySet()) {
                 try {
                     set.add(parseMethodSpec((String) key));
-                } catch (ClassNotFoundException | NoSuchMethodException e) {
-                }
+                } catch (ClassNotFoundException | NoSuchMethodException e) {}
             }
             return set;
         } catch (Exception e) {
@@ -54,9 +52,7 @@ public final class LegacyDefaultMemberAccessPolicy implements MemberAccessPolicy
         }
     }
 
-    private static Method parseMethodSpec(String methodSpec)
-            throws ClassNotFoundException,
-            NoSuchMethodException {
+    private static Method parseMethodSpec(String methodSpec) throws ClassNotFoundException, NoSuchMethodException {
         int brace = methodSpec.indexOf('(');
         int dot = methodSpec.lastIndexOf('.', brace);
         Class<?> clazz = ClassUtil.forName(methodSpec.substring(0, dot));
@@ -75,8 +71,7 @@ public final class LegacyDefaultMemberAccessPolicy implements MemberAccessPolicy
         return clazz.getMethod(methodName, argTypes);
     }
 
-    private LegacyDefaultMemberAccessPolicy() {
-    }
+    private LegacyDefaultMemberAccessPolicy() {}
 
     @Override
     public ClassMemberAccessPolicy forClass(Class<?> containingClass) {
@@ -88,8 +83,8 @@ public final class LegacyDefaultMemberAccessPolicy implements MemberAccessPolicy
         return true;
     }
 
-    private static final BlacklistClassMemberAccessPolicy CLASS_MEMBER_ACCESS_POLICY_INSTANCE
-            = new BlacklistClassMemberAccessPolicy();
+    private static final BlacklistClassMemberAccessPolicy CLASS_MEMBER_ACCESS_POLICY_INSTANCE = new BlacklistClassMemberAccessPolicy();
+
     private static class BlacklistClassMemberAccessPolicy implements ClassMemberAccessPolicy {
 
         @Override
