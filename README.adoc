@@ -30,6 +30,15 @@ complex transformations, such as transforming from XML to JSON and vice versa.
 By default, you can access multiple objects from the template context -- request and response bodies, dictionaries, context
 attributes and more.
 
+== Compatibility with APIM
+
+|===
+|Plugin version | APIM version
+
+| 1.7.x and upper         | 3.10.x to latest
+| Up to 1.6.x             | Up to 3.9.x
+|===
+
 == Configuration
 
 |===
