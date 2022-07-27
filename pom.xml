@@ -36,7 +36,7 @@
     <properties>
         <gravitee-apim-gateway-tests-sdk.version>3.18.0-SNAPSHOT</gravitee-apim-gateway-tests-sdk.version>
         <gravitee-bom.version>2.5</gravitee-bom.version>
-        <gravitee-gateway-api.version>1.32.2</gravitee-gateway-api.version>
+        <gravitee-gateway-api.version>1.37.2</gravitee-gateway-api.version>
         <gravitee-gateway-buffer.version>3.0.9</gravitee-gateway-buffer.version>
         <gravitee-policy-api.version>1.11.0</gravitee-policy-api.version>
         <freemarker.version>2.3.31</freemarker.version>
