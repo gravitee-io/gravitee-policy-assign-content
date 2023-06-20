@@ -26,10 +26,8 @@ import io.gravitee.apim.gateway.tests.sdk.AbstractPolicyTest;
 import io.gravitee.apim.gateway.tests.sdk.annotations.DeployApi;
 import io.gravitee.apim.gateway.tests.sdk.annotations.GatewayTest;
 import io.gravitee.policy.assigncontent.configuration.AssignContentPolicyConfiguration;
-import io.reactivex.observers.TestObserver;
-import io.vertx.reactivex.core.buffer.Buffer;
-import io.vertx.reactivex.ext.web.client.HttpResponse;
-import io.vertx.reactivex.ext.web.client.WebClient;
+import io.vertx.core.http.HttpMethod;
+import io.vertx.rxjava3.core.http.HttpClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -43,17 +41,23 @@ class AssignContentPolicyIntegrationTest extends AbstractPolicyTest<AssignConten
 
     @Test
     @DisplayName("Should assign content, using Freemarker")
-    void shouldAssignContent(WebClient client) {
+    void shouldAssignContent(HttpClient client) throws Exception {
         wiremock.stubFor(get("/endpoint").willReturn(ok("response from backend").withHeader("responseHeader", "responseHeaderValue")));
 
-        final TestObserver<HttpResponse<Buffer>> obs = client.get("/test").putHeader("requestHeader", "requestHeaderValue").rxSend().test();
+        final var obs = client
+            .rxRequest(HttpMethod.GET, "/test")
+            .flatMap(request -> request.putHeader("requestHeader", "requestHeaderValue").rxSend())
+            .flatMapPublisher(response -> {
+                assertThat(response.statusCode()).isEqualTo(200);
+                return response.toFlowable();
+            })
+            .test();
 
-        awaitTerminalEvent(obs);
+        obs.await();
         obs
             .assertComplete()
             .assertValue(response -> {
-                assertThat(response.statusCode()).isEqualTo(200);
-                assertThat(response.bodyAsString()).isEqualTo("Response body built from header 'responseHeader': responseHeaderValue");
+                assertThat(response.toString()).isEqualTo("Response body built from header 'responseHeader': responseHeaderValue");
                 return true;
             })
             .assertNoErrors();
