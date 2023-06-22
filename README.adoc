@@ -35,7 +35,8 @@ attributes and more.
 |===
 |Plugin version | APIM version
 
-| 1.7.x and upper         | 3.10.x to latest
+| 2.x          | 4.0.x to latest
+| 1.7.x          | 3.10.x to 3.20.x
 | Up to 1.6.x             | Up to 3.9.x
 |===
 

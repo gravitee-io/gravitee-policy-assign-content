@@ -15,127 +15,118 @@
  */
 package io.gravitee.policy.assigncontent;
 
-import freemarker.cache.StringTemplateLoader;
-import freemarker.core.TemplateClassResolver;
-import freemarker.template.Configuration;
-import freemarker.template.DefaultObjectWrapperBuilder;
 import freemarker.template.Template;
-import freemarker.template.TemplateExceptionHandler;
-import io.gravitee.gateway.api.ExecutionContext;
-import io.gravitee.gateway.api.Request;
-import io.gravitee.gateway.api.Response;
+import freemarker.template.TemplateException;
+import io.gravitee.common.http.HttpStatusCode;
 import io.gravitee.gateway.api.buffer.Buffer;
-import io.gravitee.gateway.api.http.stream.TransformableRequestStreamBuilder;
-import io.gravitee.gateway.api.http.stream.TransformableResponseStreamBuilder;
-import io.gravitee.gateway.api.stream.ReadWriteStream;
-import io.gravitee.gateway.api.stream.exception.TransformationException;
-import io.gravitee.policy.api.PolicyChain;
-import io.gravitee.policy.api.annotations.OnRequestContent;
-import io.gravitee.policy.api.annotations.OnResponseContent;
+import io.gravitee.gateway.reactive.api.ExecutionFailure;
+import io.gravitee.gateway.reactive.api.context.HttpExecutionContext;
+import io.gravitee.gateway.reactive.api.context.MessageExecutionContext;
+import io.gravitee.gateway.reactive.api.el.EvaluableMessage;
+import io.gravitee.gateway.reactive.api.el.EvaluableRequest;
+import io.gravitee.gateway.reactive.api.el.EvaluableResponse;
+import io.gravitee.gateway.reactive.api.message.Message;
+import io.gravitee.gateway.reactive.api.policy.Policy;
 import io.gravitee.policy.assigncontent.configuration.AssignContentPolicyConfiguration;
-import io.gravitee.policy.assigncontent.configuration.PolicyScope;
-import io.gravitee.policy.assigncontent.freemarker.CustomTemplateLoader;
-import io.gravitee.policy.assigncontent.freemarker.LegacyDefaultMemberAccessPolicy;
 import io.gravitee.policy.assigncontent.utils.AttributesBasedExecutionContext;
-import io.gravitee.policy.assigncontent.utils.ContentAwareRequest;
-import io.gravitee.policy.assigncontent.utils.ContentAwareResponse;
-import io.gravitee.policy.assigncontent.utils.Sha1;
+import io.gravitee.policy.v3.assigncontent.AssignContentPolicyV3;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Maybe;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
-/**
- * @author David BRASSELY (david.brassely at graviteesource.com)
- * @author GraviteeSource Team
- */
-public class AssignContentPolicy {
+@Slf4j
+public class AssignContentPolicy extends AssignContentPolicyV3 implements Policy {
 
-    private static final CustomTemplateLoader templateLoader = new CustomTemplateLoader();
-    private static final Configuration templateConfiguration = loadConfiguration();
-
-    /**
-     * SOAP transformer templateConfiguration
-     */
-    private final AssignContentPolicyConfiguration configuration;
+    public static final String PLUGIN_ID = "policy-assign-content";
 
     public AssignContentPolicy(AssignContentPolicyConfiguration configuration) {
-        this.configuration = configuration;
+        super(configuration);
     }
 
-    @OnRequestContent
-    public ReadWriteStream<Buffer> onRequestContent(Request request, ExecutionContext executionContext, PolicyChain policyChain) {
-        if (configuration.getScope() == PolicyScope.REQUEST) {
-            return TransformableRequestStreamBuilder
-                .on(request)
-                .chain(policyChain)
-                .transform(buffer -> {
-                    try {
-                        Template template = getTemplate(configuration.getBody());
-                        StringWriter writer = new StringWriter();
-                        Map<String, Object> model = new HashMap<>();
-                        model.put("request", new ContentAwareRequest(request, buffer.toString()));
-                        model.put("context", new AttributesBasedExecutionContext(executionContext));
-                        template.process(model, writer);
-                        return Buffer.buffer(writer.toString());
-                    } catch (Exception ioe) {
-                        throw new TransformationException("Unable to assign body content: " + ioe.getMessage(), ioe);
-                    }
+    @Override
+    public String id() {
+        return PLUGIN_ID;
+    }
+
+    @Override
+    public Completable onRequest(HttpExecutionContext ctx) {
+        return ctx.request().onBody(body -> assignBodyContent(ctx, body, true));
+    }
+
+    @Override
+    public Completable onResponse(HttpExecutionContext ctx) {
+        return ctx.response().onBody(body -> assignBodyContent(ctx, body, false));
+    }
+
+    private Maybe<Buffer> assignBodyContent(HttpExecutionContext ctx, Maybe<Buffer> body, boolean isRequest) {
+        return body
+            .flatMap(content -> {
+                var writer = replaceContent(isRequest, ctx, content.toString());
+                return Maybe.just(Buffer.buffer(writer.toString()));
+            })
+            .switchIfEmpty(
+                Maybe.fromCallable(() -> {
+                    // For method like GET where body is missing, we have to handle the case where the maybe is empty.
+                    // It can make sens if in the Flow we have an override method policy that replace the GET by a POST
+                    var writer = replaceContent(isRequest, ctx, "");
+                    return Buffer.buffer(writer.toString());
                 })
-                .build();
+            )
+            .onErrorResumeNext(ioe -> {
+                log.debug("Unable to assign body content", ioe);
+                return ctx.interruptBodyWith(
+                    new ExecutionFailure(HttpStatusCode.INTERNAL_SERVER_ERROR_500)
+                        .message("Unable to assign body content: " + ioe.getMessage())
+                );
+            });
+    }
+
+    private StringWriter replaceContent(boolean isRequest, HttpExecutionContext ctx, String content) throws IOException, TemplateException {
+        Template template = getTemplate(configuration.getBody());
+        StringWriter writer = new StringWriter();
+        Map<String, Object> model = new HashMap<>();
+        if (isRequest) {
+            model.put("request", new EvaluableRequest(ctx.request(), content));
+        } else {
+            model.put("request", new EvaluableRequest(ctx.request()));
+            model.put("response", new EvaluableResponse(ctx.response(), content));
         }
-
-        return null;
+        model.put("context", new AttributesBasedExecutionContext(ctx));
+        template.process(model, writer);
+        return writer;
     }
 
-    @OnResponseContent
-    public ReadWriteStream<Buffer> onResponseContent(Response response, ExecutionContext executionContext, PolicyChain policyChain) {
-        if (configuration.getScope() == PolicyScope.RESPONSE) {
-            return TransformableResponseStreamBuilder
-                .on(response)
-                .chain(policyChain)
-                .transform(buffer -> {
-                    try {
-                        Template template = getTemplate(configuration.getBody());
-                        StringWriter writer = new StringWriter();
-                        Map<String, Object> model = new HashMap<>();
-                        model.put("response", new ContentAwareResponse(response, buffer.toString()));
-                        model.put("context", new AttributesBasedExecutionContext(executionContext));
-                        template.process(model, writer);
-                        return Buffer.buffer(writer.toString());
-                    } catch (Exception ioe) {
-                        throw new TransformationException("Unable to assign body content: " + ioe.getMessage(), ioe);
-                    }
-                })
-                .build();
-        }
-
-        return null;
+    @Override
+    public Completable onMessageRequest(MessageExecutionContext ctx) {
+        return ctx.request().onMessage(msg -> assignMessageContent(ctx, msg));
     }
 
-    private static Configuration loadConfiguration() {
-        Configuration configuration = new Configuration(Configuration.VERSION_2_3_30);
-        configuration.setDefaultEncoding(Charset.defaultCharset().name());
-        configuration.setNewBuiltinClassResolver(TemplateClassResolver.ALLOWS_NOTHING_RESOLVER);
-        configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-
-        // Ensure default value is false
-        configuration.setAPIBuiltinEnabled(false);
-
-        final DefaultObjectWrapperBuilder objectWrapperBuilder = new DefaultObjectWrapperBuilder(Configuration.VERSION_2_3_30);
-        objectWrapperBuilder.setMemberAccessPolicy(LegacyDefaultMemberAccessPolicy.INSTANCE);
-        configuration.setObjectWrapper(objectWrapperBuilder.build());
-
-        // Load inline templates
-        configuration.setTemplateLoader(templateLoader);
-
-        return configuration;
+    @Override
+    public Completable onMessageResponse(MessageExecutionContext ctx) {
+        return ctx.response().onMessage(msg -> assignMessageContent(ctx, msg));
     }
 
-    Template getTemplate(String template) throws IOException {
-        String hash = Sha1.sha1(template);
-        templateLoader.putIfAbsent(hash, template);
-        return templateConfiguration.getTemplate(hash);
+    private Maybe<Message> assignMessageContent(MessageExecutionContext ctx, Message msg) {
+        return Maybe
+            .fromCallable(() -> {
+                Template template = getTemplate(configuration.getBody());
+                StringWriter writer = new StringWriter();
+                Map<String, Object> model = new HashMap<>();
+                model.put("message", new EvaluableMessage(msg));
+                model.put("context", new AttributesBasedExecutionContext(ctx));
+                template.process(model, writer);
+                return msg.content(Buffer.buffer(writer.toString()));
+            })
+            .onErrorResumeNext(err -> {
+                log.debug("Unable to assign message content", err);
+                return ctx.interruptMessageWith(
+                    new ExecutionFailure(HttpStatusCode.INTERNAL_SERVER_ERROR_500)
+                        .message("Unable to assign message content: " + err.getMessage())
+                );
+            });
     }
 }

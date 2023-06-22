@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.gravitee.policy.assigncontent;
+package io.gravitee.policy.v3.assigncontent;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -31,6 +31,7 @@ import io.gravitee.policy.api.PolicyChain;
 import io.gravitee.policy.api.PolicyResult;
 import io.gravitee.policy.assigncontent.configuration.AssignContentPolicyConfiguration;
 import io.gravitee.policy.assigncontent.configuration.PolicyScope;
+import io.gravitee.policy.v3.assigncontent.AssignContentPolicyV3;
 import io.gravitee.reporter.api.http.Metrics;
 import org.junit.Assert;
 import org.junit.Before;
@@ -45,7 +46,7 @@ import org.mockito.junit.MockitoJUnitRunner;
  * @author GraviteeSource Team
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AssignContentPolicyTest {
+public class AssignContentPolicyV3Test {
 
     @Mock
     private Request request;
@@ -82,7 +83,7 @@ public class AssignContentPolicyTest {
         when(configuration.getScope()).thenReturn(PolicyScope.REQUEST);
 
         Buffer buffer = factory.buffer("{\"name\":1}");
-        ReadWriteStream<Buffer> stream = new AssignContentPolicy(configuration).onRequestContent(request, context, chain);
+        ReadWriteStream<Buffer> stream = new AssignContentPolicyV3(configuration).onRequestContent(request, context, chain);
         stream.bodyHandler(buffer1 -> Assert.assertEquals("header-value", buffer1.toString()));
 
         stream.end(buffer);
@@ -100,7 +101,7 @@ public class AssignContentPolicyTest {
         when(configuration.getScope()).thenReturn(PolicyScope.REQUEST);
 
         Buffer buffer = factory.buffer("{\"name\":1}");
-        ReadWriteStream<Buffer> stream = new AssignContentPolicy(configuration).onRequestContent(request, context, chain);
+        ReadWriteStream<Buffer> stream = new AssignContentPolicyV3(configuration).onRequestContent(request, context, chain);
         stream.bodyHandler(buffer1 -> Assert.assertEquals("header-value", buffer1.toString()));
 
         stream.end(buffer);
@@ -114,7 +115,7 @@ public class AssignContentPolicyTest {
         when(configuration.getScope()).thenReturn(PolicyScope.REQUEST);
 
         Buffer buffer = factory.buffer("{\"name\":1}");
-        ReadWriteStream<Buffer> stream = new AssignContentPolicy(configuration).onRequestContent(request, context, chain);
+        ReadWriteStream<Buffer> stream = new AssignContentPolicyV3(configuration).onRequestContent(request, context, chain);
         stream.bodyHandler(buffer1 -> Assert.assertEquals("root { {\"name\":1} }", buffer1.toString()));
 
         stream.end(buffer);
@@ -128,7 +129,7 @@ public class AssignContentPolicyTest {
         when(configuration.getScope()).thenReturn(PolicyScope.REQUEST);
 
         Buffer buffer = factory.buffer("{\"name\":1}");
-        ReadWriteStream<Buffer> stream = new AssignContentPolicy(configuration).onRequestContent(request, context, chain);
+        ReadWriteStream<Buffer> stream = new AssignContentPolicyV3(configuration).onRequestContent(request, context, chain);
         stream.end(buffer);
 
         ArgumentCaptor<PolicyResult> policyResult = ArgumentCaptor.forClass(PolicyResult.class);
@@ -143,7 +144,7 @@ public class AssignContentPolicyTest {
         when(configuration.getScope()).thenReturn(PolicyScope.REQUEST);
 
         Buffer buffer = factory.buffer("{\"name\":1}");
-        ReadWriteStream<Buffer> stream = new AssignContentPolicy(configuration).onRequestContent(request, context, chain);
+        ReadWriteStream<Buffer> stream = new AssignContentPolicyV3(configuration).onRequestContent(request, context, chain);
         stream.end(buffer);
 
         ArgumentCaptor<PolicyResult> policyResult = ArgumentCaptor.forClass(PolicyResult.class);
@@ -158,7 +159,7 @@ public class AssignContentPolicyTest {
         when(configuration.getScope()).thenReturn(PolicyScope.REQUEST);
 
         Buffer buffer = factory.buffer("{\"name\":1}");
-        ReadWriteStream<Buffer> stream = new AssignContentPolicy(configuration).onRequestContent(request, context, chain);
+        ReadWriteStream<Buffer> stream = new AssignContentPolicyV3(configuration).onRequestContent(request, context, chain);
         stream.end(buffer);
 
         ArgumentCaptor<PolicyResult> policyResult = ArgumentCaptor.forClass(PolicyResult.class);
@@ -184,7 +185,7 @@ public class AssignContentPolicyTest {
         when(configuration.getScope()).thenReturn(PolicyScope.REQUEST);
 
         Buffer buffer = factory.buffer("{\"name\":1}");
-        ReadWriteStream<Buffer> stream = new AssignContentPolicy(configuration).onRequestContent(request, context, chain);
+        ReadWriteStream<Buffer> stream = new AssignContentPolicyV3(configuration).onRequestContent(request, context, chain);
         stream.end(buffer);
 
         ArgumentCaptor<PolicyResult> policyResult = ArgumentCaptor.forClass(PolicyResult.class);

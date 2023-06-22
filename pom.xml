@@ -37,10 +37,14 @@
         <gravitee-apim-gateway-tests-sdk.version>4.0.0-SNAPSHOT</gravitee-apim-gateway-tests-sdk.version>
         <gravitee-apim-gateway.version>4.0.0-SNAPSHOT</gravitee-apim-gateway.version>
         <gravitee-bom.version>5.0.0</gravitee-bom.version>
-        <gravitee-gateway-api.version>3.0.0-alpha.6</gravitee-gateway-api.version>
+        <gravitee-gateway-api.version>3.0.0-alpha.7</gravitee-gateway-api.version>
         <gravitee-policy-api.version>1.11.0</gravitee-policy-api.version>
         <freemarker.version>2.3.32</freemarker.version>
         <guava.version>30.1.1-jre</guava.version>
+
+        <gravitee-entrypoint-sse.version>3.1.0-alpha.2</gravitee-entrypoint-sse.version>
+        <gravitee-entrypoint-http-post.version>1.0.0-alpha.2</gravitee-entrypoint-http-post.version>
+        <gravitee-reactor-message.version>1.0.0-alpha.7</gravitee-reactor-message.version>
 
         <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
         <!-- Property used by the publication job in CI-->
@@ -147,6 +151,41 @@
             <groupId>io.gravitee.apim.gateway</groupId>
             <artifactId>gravitee-apim-gateway-tests-sdk</artifactId>
             <version>${gravitee-apim-gateway-tests-sdk.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.gravitee.apim.plugin.entrypoint</groupId>
+            <artifactId>gravitee-apim-plugin-entrypoint-http-proxy</artifactId>
+            <version>${gravitee-apim-gateway-tests-sdk.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.graviteesource.entrypoint</groupId>
+            <artifactId>gravitee-entrypoint-sse</artifactId>
+            <version>${gravitee-entrypoint-sse.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.gravitee.apim.plugin.endpoint</groupId>
+            <artifactId>gravitee-apim-plugin-endpoint-http-proxy</artifactId>
+            <version>${gravitee-apim-gateway-tests-sdk.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.graviteesource.entrypoint</groupId>
+            <artifactId>gravitee-entrypoint-http-post</artifactId>
+            <version>${gravitee-entrypoint-http-post.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.graviteesource.reactor</groupId>
+            <artifactId>gravitee-reactor-message</artifactId>
+            <version>${gravitee-reactor-message.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

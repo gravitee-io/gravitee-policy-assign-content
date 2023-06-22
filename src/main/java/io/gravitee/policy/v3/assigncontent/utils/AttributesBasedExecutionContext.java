@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.gravitee.policy.assigncontent.utils;
+package io.gravitee.policy.v3.assigncontent.utils;
 
-import io.gravitee.gateway.reactive.api.context.GenericExecutionContext;
+import io.gravitee.gateway.api.ExecutionContext;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Eric LELEU (eric.leleu at graviteesource.com)
+ * @author David BRASSELY (david.brassely at graviteesource.com)
  * @author GraviteeSource Team
  */
 public class AttributesBasedExecutionContext {
 
     private static final String CONTEXT_DICTIONARIES_VARIABLE = "dictionaries";
-    private final GenericExecutionContext context;
+    private final ExecutionContext context;
     private final Map<String, Object> attributes = new AttributeMap();
 
-    public AttributesBasedExecutionContext(final GenericExecutionContext context) {
+    public AttributesBasedExecutionContext(final ExecutionContext context) {
         this.context = context;
     }
 

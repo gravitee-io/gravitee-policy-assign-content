@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.gravitee.policy.assigncontent.utils;
+package io.gravitee.policy.v3.assigncontent.utils;
 
 import io.gravitee.gateway.api.http.HttpHeaders;
 import java.util.Collection;
