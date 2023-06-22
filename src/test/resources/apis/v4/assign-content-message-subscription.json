@@ -1,0 +1,83 @@
+{
+  "id": "apiv4-msg-assign-content-policy",
+  "name": "apiv4-msg-assign-content-policy",
+  "description": "apiv4-msg-assign-content-policy",
+  "definitionVersion": "4.0.0",
+  "type": "message",
+  "analytics": {},
+  "description": "Assign Message content",
+  "listeners": [
+    {
+      "type": "http",
+      "paths": [
+        {
+          "path": "/subscribe-assign-content"
+        }
+      ],
+      "entrypoints": [
+        {
+          "type": "sse",
+          "configuration": {
+            "heartbeatIntervalInMs": 5000,
+            "metadataAsComment": false,
+            "headersAsComment": false
+          }
+        }
+      ]
+    }
+  ],
+  "endpointGroups": [
+    {
+      "name": "default",
+      "type": "mock",
+      "endpoints": [
+        {
+          "name": "default",
+          "type": "mock",
+          "weight": 1,
+          "inheritConfiguration": false,
+          "configuration": {
+            "messageInterval": 500,
+            "messageContent": "Content Sent by Mock policy",
+            "messageCount": 10,
+            "headers": [
+              {
+                "name": "msgHeader",
+                "value": "messageHeaderValue"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "flows": [
+    {
+      "name": "flow-1",
+      "enabled": true,
+      "selectors" : [
+        {
+          "type": "channel",
+          "operation": [ "SUBSCRIBE" ],
+          "channel": "/",
+          "channel-operator": "STARTS_WITH"
+        }
+      ],
+      "request": [],
+      "response": [],
+      "subscribe": [
+        {
+          "name": "Assign Content",
+          "description": "",
+          "enabled": true,
+          "policy": "policy-assign-content",
+          "configuration": {
+            "scope": "RESPONSE",
+            "body": "Body built from message header 'msgHeader' and content: ${message.headers['msgHeader'][0]} / ${message.content}"
+          }
+        }
+      ],
+      "publish": []
+    }
+  ]
+}

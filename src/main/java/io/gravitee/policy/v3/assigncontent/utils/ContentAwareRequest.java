@@ -13,30 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.gravitee.policy.assigncontent.utils;
+package io.gravitee.policy.v3.assigncontent.utils;
 
-import io.gravitee.gateway.api.Response;
+import io.gravitee.common.util.MultiValueMap;
+import io.gravitee.gateway.api.Request;
 
 /**
  * @author David BRASSELY (david.brassely at graviteesource.com)
  * @author GraviteeSource Team
  */
-public class ContentAwareResponse {
+public class ContentAwareRequest {
 
-    private final Response response;
+    private final Request request;
     private final String content;
 
-    public ContentAwareResponse(Response response, String content) {
-        this.response = response;
+    public ContentAwareRequest(Request request, String content) {
+        this.request = request;
         this.content = content;
     }
 
-    public int getStatus() {
-        return response.status();
+    public String getId() {
+        return request.id();
     }
 
     public HeaderMapAdapter getHeaders() {
-        return new HeaderMapAdapter(response.headers());
+        return new HeaderMapAdapter(request.headers());
+    }
+
+    public MultiValueMap<String, String> getParams() {
+        return request.parameters();
+    }
+
+    public String[] getPaths() {
+        return request.path().split("/");
     }
 
     public String getContent() {
