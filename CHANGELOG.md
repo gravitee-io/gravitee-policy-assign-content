@@ -1,3 +1,17 @@
+# [2.0.0-alpha.1](https://github.com/gravitee-io/gravitee-policy-assign-content/compare/1.7.0...2.0.0-alpha.1) (2023-06-23)
+
+
+### Features
+
+* make the policy compatible with V4 API (Proxy & Message) ([33fba04](https://github.com/gravitee-io/gravitee-policy-assign-content/commit/33fba042326d280a1e90865b0c2f46aa8353b0a1))
+
+
+### BREAKING CHANGES
+
+* this policy is now using the V4 interfaces
+
+fix APIM-1622
+
 # [1.7.0](https://github.com/gravitee-io/gravitee-policy-assign-content/compare/1.6.0...1.7.0) (2022-01-21)
 
 
