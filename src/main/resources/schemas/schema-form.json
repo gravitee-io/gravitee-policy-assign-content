@@ -1,34 +1,38 @@
 {
-  "type" : "object",
-  "id" : "urn:jsonschema:io:gravitee:policy:assigncontent:configuration:AssignContentPolicyConfiguration",
-  "properties" : {
-    "scope" : {
-      "title": "Scope",
-      "description": "Execute policy on <strong>request</strong> or <strong>response</strong> phase.",
-      "type" : "string",
-      "default": "REQUEST",
-      "enum" : [ "REQUEST", "RESPONSE" ],
-      "deprecated": "true"
-    },
-    "body" : {
-      "title": "Body content",
-      "description": "The body content to attach to the request or to the response. You can also make use of freemarker templating engine to map an incoming body content to a new one.",
-      "type" : "string",
-      "x-schema-form": {
-        "type": "codemirror",
-        "codemirrorOptions": {
-          "placeholder": "Put the body content here",
-          "lineWrapping": true,
-          "lineNumbers": true,
-          "allowDropFileTypes": true,
-          "autoCloseTags": true,
-          "mode": "xml"
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "scope": {
+            "title": "Scope",
+            "description": "Select phase to execute the policy.",
+            "type": "string",
+            "default": "REQUEST",
+            "enum": ["REQUEST", "RESPONSE"],
+            "deprecated": "true"
+        },
+        "body": {
+            "title": "Body content",
+            "type": "string",
+            "format": "gio-code-editor",
+            "x-schema-form": {
+                "type": "codemirror",
+                "codemirrorOptions": {
+                    "placeholder": "Put the body content here",
+                    "lineWrapping": true,
+                    "lineNumbers": true,
+                    "allowDropFileTypes": true,
+                    "autoCloseTags": true,
+                    "mode": "xml"
+                }
+            },
+            "gioConfig": {
+                "banner": {
+                    "title": "Body content",
+                    "text": "The body content to attach to the request or to the response. You can also make use of freemarker templating engine to map an incoming body content to a new one."
+                }
+            }
         }
-      }
-    }
-  },
-  "required": [
-    "scope",
-    "body"
-  ]
+    },
+    "required": ["scope", "body"]
 }
