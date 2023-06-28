@@ -1,3 +1,10 @@
+# [2.0.0-alpha.2](https://github.com/gravitee-io/gravitee-policy-assign-content/compare/2.0.0-alpha.1...2.0.0-alpha.2) (2023-06-28)
+
+
+### Features
+
+* clean and validate json schema for v4 ([dc6eca2](https://github.com/gravitee-io/gravitee-policy-assign-content/commit/dc6eca2fd86be00e9dc64bc1c4240a107006bfc5))
+
 # [2.0.0-alpha.1](https://github.com/gravitee-io/gravitee-policy-assign-content/compare/1.7.0...2.0.0-alpha.1) (2023-06-23)
 
 
