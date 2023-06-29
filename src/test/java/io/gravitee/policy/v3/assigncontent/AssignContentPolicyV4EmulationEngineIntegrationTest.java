@@ -26,7 +26,6 @@ import io.gravitee.apim.gateway.tests.sdk.AbstractPolicyTest;
 import io.gravitee.apim.gateway.tests.sdk.annotations.DeployApi;
 import io.gravitee.apim.gateway.tests.sdk.annotations.GatewayTest;
 import io.gravitee.apim.gateway.tests.sdk.configuration.GatewayMode;
-import io.gravitee.definition.model.ExecutionMode;
 import io.gravitee.policy.assigncontent.AssignContentPolicy;
 import io.gravitee.policy.assigncontent.configuration.AssignContentPolicyConfiguration;
 import io.vertx.core.http.HttpMethod;
@@ -35,39 +34,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * @author Yann TAVERNIER (yann.tavernier at graviteesource.com)
+ * @author Guillaume LAMIRAND (guillaume.lamirand at graviteesource.com)
  * @author GraviteeSource Team
  */
-@GatewayTest(v2ExecutionMode = ExecutionMode.V3)
-@DeployApi("/apis/v3/assign-content.json")
-class AssignContentPolicyV3IntegrationTest extends AbstractPolicyTest<AssignContentPolicy, AssignContentPolicyConfiguration> {
-
-    @Test
-    @DisplayName("Should assign content, using Freemarker")
-    void shouldAssignContent(HttpClient client) throws Exception {
-        wiremock.stubFor(get("/endpoint").willReturn(ok("response from backend").withHeader("responseHeader", "responseHeaderValue")));
-
-        final var obs = client
-            .rxRequest(HttpMethod.GET, "/test")
-            .flatMap(request -> request.putHeader("requestHeader", "requestHeaderValue").rxSend())
-            .flatMapPublisher(response -> {
-                assertThat(response.statusCode()).isEqualTo(200);
-                return response.toFlowable();
-            })
-            .test();
-
-        obs.await();
-        obs
-            .assertComplete()
-            .assertValue(response -> {
-                assertThat(response.toString()).isEqualTo("Response body built from header 'responseHeader': responseHeaderValue");
-                return true;
-            })
-            .assertNoErrors();
-
-        wiremock.verify(
-            getRequestedFor(urlPathEqualTo("/endpoint"))
-                .withRequestBody(equalTo("Request body built from header 'requestHeader': requestHeaderValue"))
-        );
-    }
-}
+@GatewayTest
+class AssignContentPolicyV4EmulationEngineIntegrationTest extends AssignContentPolicyV3IntegrationTest {}

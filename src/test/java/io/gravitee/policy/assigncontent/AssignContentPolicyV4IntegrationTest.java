@@ -24,12 +24,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.gravitee.apim.gateway.tests.sdk.annotations.DeployApi;
-import io.gravitee.apim.gateway.tests.sdk.annotations.GatewayTest;
-import io.gravitee.apim.gateway.tests.sdk.configuration.GatewayMode;
 import io.gravitee.apim.gateway.tests.sdk.connector.fakes.MessageStorage;
 import io.gravitee.common.http.MediaType;
 import io.gravitee.gateway.api.http.HttpHeaderNames;
-import io.reactivex.rxjava3.subscribers.TestSubscriber;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.rxjava3.core.buffer.Buffer;
 import io.vertx.rxjava3.core.http.HttpClient;
@@ -44,10 +41,9 @@ import org.junit.jupiter.api.Test;
  * @author Eric LELEU (eric.leleu at graviteesource.com)
  * @author GraviteeSource Team
  */
-public class AssignContentPolicyIntegrationTest {
+public class AssignContentPolicyV4IntegrationTest {
 
     @Nested
-    @GatewayTest(mode = GatewayMode.JUPITER)
     @DeployApi("/apis/v4/assign-content-proxy.json")
     class HttpProxy extends V4EngineTest {
 
@@ -86,7 +82,6 @@ public class AssignContentPolicyIntegrationTest {
     }
 
     @Nested
-    @GatewayTest(mode = GatewayMode.JUPITER)
     @DeployApi("/apis/v4/assign-content-message-subscription.json")
     class OnMessageResponse extends V4EngineTest {
 
@@ -118,7 +113,6 @@ public class AssignContentPolicyIntegrationTest {
     }
 
     @Nested
-    @GatewayTest(mode = GatewayMode.JUPITER)
     @DeployApi("/apis/v4/assign-content-message-publish.json")
     class OnMessageRequest extends V4EngineTest {
 

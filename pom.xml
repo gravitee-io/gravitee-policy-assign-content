@@ -44,7 +44,7 @@
 
         <gravitee-entrypoint-sse.version>3.1.0-alpha.2</gravitee-entrypoint-sse.version>
         <gravitee-entrypoint-http-post.version>1.0.0-alpha.2</gravitee-entrypoint-http-post.version>
-        <gravitee-reactor-message.version>1.0.0-alpha.7</gravitee-reactor-message.version>
+        <gravitee-reactor-message.version>1.0.0-alpha.10</gravitee-reactor-message.version>
 
         <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
         <!-- Property used by the publication job in CI-->

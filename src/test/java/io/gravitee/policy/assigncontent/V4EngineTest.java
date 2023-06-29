@@ -19,6 +19,7 @@ import com.graviteesource.entrypoint.http.post.HttpPostEntrypointConnectorFactor
 import com.graviteesource.entrypoint.sse.SseEntrypointConnectorFactory;
 import com.graviteesource.reactor.message.MessageApiReactorFactory;
 import io.gravitee.apim.gateway.tests.sdk.AbstractPolicyTest;
+import io.gravitee.apim.gateway.tests.sdk.annotations.GatewayTest;
 import io.gravitee.apim.gateway.tests.sdk.connector.EndpointBuilder;
 import io.gravitee.apim.gateway.tests.sdk.connector.EntrypointBuilder;
 import io.gravitee.apim.gateway.tests.sdk.connector.fakes.PersistentMockEndpointConnectorFactory;
@@ -37,6 +38,7 @@ import java.util.Set;
  * @author Eric LELEU (eric.leleu at graviteesource.com)
  * @author GraviteeSource Team
  */
+@GatewayTest
 public class V4EngineTest extends AbstractPolicyTest<AssignContentPolicy, AssignContentPolicyConfiguration> {
 
     @Override
