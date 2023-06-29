@@ -1,3 +1,10 @@
+# [2.0.0-alpha.3](https://github.com/gravitee-io/gravitee-policy-assign-content/compare/2.0.0-alpha.2...2.0.0-alpha.3) (2023-06-29)
+
+
+### Bug Fixes
+
+* use new execution mode ([91bba78](https://github.com/gravitee-io/gravitee-policy-assign-content/commit/91bba785f4a53acea75c26a730291012eb56a8fc))
+
 # [2.0.0-alpha.2](https://github.com/gravitee-io/gravitee-policy-assign-content/compare/2.0.0-alpha.1...2.0.0-alpha.2) (2023-06-28)
 
 
