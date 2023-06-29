@@ -19,6 +19,8 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import io.gravitee.common.http.HttpStatusCode;
 import io.gravitee.gateway.api.buffer.Buffer;
+import io.gravitee.gateway.api.http.HttpHeaderNames;
+import io.gravitee.gateway.api.http.HttpHeaders;
 import io.gravitee.gateway.reactive.api.ExecutionFailure;
 import io.gravitee.gateway.reactive.api.context.HttpExecutionContext;
 import io.gravitee.gateway.reactive.api.context.MessageExecutionContext;
@@ -54,15 +56,15 @@ public class AssignContentPolicy extends AssignContentPolicyV3 implements Policy
 
     @Override
     public Completable onRequest(HttpExecutionContext ctx) {
-        return ctx.request().onBody(body -> assignBodyContent(ctx, body, true));
+        return ctx.request().onBody(body -> assignBodyContent(ctx, ctx.request().headers(), body, true));
     }
 
     @Override
     public Completable onResponse(HttpExecutionContext ctx) {
-        return ctx.response().onBody(body -> assignBodyContent(ctx, body, false));
+        return ctx.response().onBody(body -> assignBodyContent(ctx, ctx.response().headers(), body, false));
     }
 
-    private Maybe<Buffer> assignBodyContent(HttpExecutionContext ctx, Maybe<Buffer> body, boolean isRequest) {
+    private Maybe<Buffer> assignBodyContent(HttpExecutionContext ctx, HttpHeaders httpHeaders, Maybe<Buffer> body, boolean isRequest) {
         return body
             .flatMap(content -> {
                 var writer = replaceContent(isRequest, ctx, content.toString());
@@ -76,6 +78,7 @@ public class AssignContentPolicy extends AssignContentPolicyV3 implements Policy
                     return Buffer.buffer(writer.toString());
                 })
             )
+            .doOnSuccess(buffer -> httpHeaders.set(HttpHeaderNames.CONTENT_LENGTH, Integer.toString(buffer.length())))
             .onErrorResumeNext(ioe -> {
                 log.debug("Unable to assign body content", ioe);
                 return ctx.interruptBodyWith(
