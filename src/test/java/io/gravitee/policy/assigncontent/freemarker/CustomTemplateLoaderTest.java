@@ -15,7 +15,7 @@
  */
 package io.gravitee.policy.assigncontent.freemarker;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -36,24 +36,24 @@ public class CustomTemplateLoaderTest {
     @Test
     public void shouldPutInCache() {
         cut.putIfAbsent("test", "template body");
-        assertEquals(1, cut.getCache().size());
+        assertThat(cut.getCache().size()).isOne();
     }
 
     @Test
     public void shouldNotPutInCacheIfAlreadyIn() {
         cut.putIfAbsent("test", "template body");
         cut.putIfAbsent("test", "template body");
-        assertEquals(1, cut.getCache().size());
+        assertThat(cut.getCache().size()).isOne();
     }
 
     @Test
     public void shouldFind() {
         cut.putIfAbsent("test", "template body");
-        assertNotNull(cut.findTemplateSource("test"));
+        assertThat(cut.findTemplateSource("test")).isNotNull();
     }
 
     @Test
     public void shouldNotFindIfNothingInCache() {
-        assertNull(cut.findTemplateSource("test"));
+        assertThat(cut.findTemplateSource("test")).isNull();
     }
 }

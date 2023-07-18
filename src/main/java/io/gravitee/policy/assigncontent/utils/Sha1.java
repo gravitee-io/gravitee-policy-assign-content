@@ -15,6 +15,7 @@
  */
 package io.gravitee.policy.assigncontent.utils;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 
 /**
@@ -24,7 +25,7 @@ import java.security.MessageDigest;
 public final class Sha1 {
 
     private static String convertToHex(byte[] data) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (int i = 0; i < data.length; i++) {
             int halfbyte = (data[i] >>> 4) & 0x0F;
             int two_halfs = 0;
@@ -42,7 +43,7 @@ public final class Sha1 {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-1");
             byte[] sha1hash = new byte[40];
-            md.update(text.getBytes("UTF-8"), 0, text.length());
+            md.update(text.getBytes(StandardCharsets.UTF_8), 0, text.length());
             sha1hash = md.digest();
             return convertToHex(sha1hash);
         } catch (Exception ex) {

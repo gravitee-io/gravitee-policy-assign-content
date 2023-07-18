@@ -15,23 +15,7 @@
  */
 package io.gravitee.policy.v3.assigncontent;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.ok;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static org.assertj.core.api.Assertions.assertThat;
-
-import io.gravitee.apim.gateway.tests.sdk.AbstractPolicyTest;
-import io.gravitee.apim.gateway.tests.sdk.annotations.DeployApi;
 import io.gravitee.apim.gateway.tests.sdk.annotations.GatewayTest;
-import io.gravitee.apim.gateway.tests.sdk.configuration.GatewayMode;
-import io.gravitee.policy.assigncontent.AssignContentPolicy;
-import io.gravitee.policy.assigncontent.configuration.AssignContentPolicyConfiguration;
-import io.vertx.core.http.HttpMethod;
-import io.vertx.rxjava3.core.http.HttpClient;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 
 /**
  * @author Guillaume LAMIRAND (guillaume.lamirand at graviteesource.com)
