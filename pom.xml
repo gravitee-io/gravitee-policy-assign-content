@@ -36,15 +36,15 @@
     <properties>
         <gravitee-apim-gateway-tests-sdk.version>4.0.0-SNAPSHOT</gravitee-apim-gateway-tests-sdk.version>
         <gravitee-apim-gateway.version>4.0.0-SNAPSHOT</gravitee-apim-gateway.version>
-        <gravitee-bom.version>5.0.0</gravitee-bom.version>
-        <gravitee-gateway-api.version>3.0.0-alpha.7</gravitee-gateway-api.version>
+        <gravitee-bom.version>6.0.3</gravitee-bom.version>
+        <gravitee-gateway-api.version>3.0.0</gravitee-gateway-api.version>
         <gravitee-policy-api.version>1.11.0</gravitee-policy-api.version>
         <freemarker.version>2.3.32</freemarker.version>
         <guava.version>30.1.1-jre</guava.version>
 
-        <gravitee-entrypoint-sse.version>3.1.0-alpha.2</gravitee-entrypoint-sse.version>
-        <gravitee-entrypoint-http-post.version>1.0.0-alpha.2</gravitee-entrypoint-http-post.version>
-        <gravitee-reactor-message.version>1.0.0-alpha.10</gravitee-reactor-message.version>
+        <gravitee-entrypoint-sse.version>4.0.0</gravitee-entrypoint-sse.version>
+        <gravitee-entrypoint-http-post.version>1.0.0</gravitee-entrypoint-http-post.version>
+        <gravitee-reactor-message.version>1.0.1</gravitee-reactor-message.version>
 
         <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
         <!-- Property used by the publication job in CI-->
