@@ -1,3 +1,29 @@
+# [2.0.0](https://github.com/gravitee-io/gravitee-policy-assign-content/compare/1.7.0...2.0.0) (2023-07-18)
+
+
+### Bug Fixes
+
+* use new execution mode ([91bba78](https://github.com/gravitee-io/gravitee-policy-assign-content/commit/91bba785f4a53acea75c26a730291012eb56a8fc))
+
+
+### chore
+
+* **deps:** update gravitee-parent ([d7c1221](https://github.com/gravitee-io/gravitee-policy-assign-content/commit/d7c122120b4c9010a10c5e932bb776f4c8004604))
+
+
+### Features
+
+* clean and validate json schema for v4 ([dc6eca2](https://github.com/gravitee-io/gravitee-policy-assign-content/commit/dc6eca2fd86be00e9dc64bc1c4240a107006bfc5))
+* make the policy compatible with V4 API (Proxy & Message) ([33fba04](https://github.com/gravitee-io/gravitee-policy-assign-content/commit/33fba042326d280a1e90865b0c2f46aa8353b0a1))
+
+
+### BREAKING CHANGES
+
+* **deps:** require Java17
+* this policy is now using the V4 interfaces
+
+fix APIM-1622
+
 # [2.0.0-alpha.3](https://github.com/gravitee-io/gravitee-policy-assign-content/compare/2.0.0-alpha.2...2.0.0-alpha.3) (2023-06-29)
 
 
