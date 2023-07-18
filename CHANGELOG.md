@@ -1,3 +1,15 @@
+# [2.0.0-alpha.4](https://github.com/gravitee-io/gravitee-policy-assign-content/compare/2.0.0-alpha.3...2.0.0-alpha.4) (2023-07-18)
+
+
+### chore
+
+* **deps:** update gravitee-parent ([d7c1221](https://github.com/gravitee-io/gravitee-policy-assign-content/commit/d7c122120b4c9010a10c5e932bb776f4c8004604))
+
+
+### BREAKING CHANGES
+
+* **deps:** require Java17
+
 # [2.0.0-alpha.3](https://github.com/gravitee-io/gravitee-policy-assign-content/compare/2.0.0-alpha.2...2.0.0-alpha.3) (2023-06-29)
 
 
