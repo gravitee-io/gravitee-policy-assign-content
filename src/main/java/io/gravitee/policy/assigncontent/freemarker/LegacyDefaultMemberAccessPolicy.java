@@ -44,7 +44,9 @@ public final class LegacyDefaultMemberAccessPolicy implements MemberAccessPolicy
             for (Object key : props.keySet()) {
                 try {
                     set.add(parseMethodSpec((String) key));
-                } catch (ClassNotFoundException | NoSuchMethodException e) {}
+                } catch (ClassNotFoundException | NoSuchMethodException e) {
+                    // do nothing
+                }
             }
             return set;
         } catch (Exception e) {

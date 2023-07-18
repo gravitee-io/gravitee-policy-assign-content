@@ -25,7 +25,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.gravitee.apim.gateway.tests.sdk.AbstractPolicyTest;
 import io.gravitee.apim.gateway.tests.sdk.annotations.DeployApi;
 import io.gravitee.apim.gateway.tests.sdk.annotations.GatewayTest;
-import io.gravitee.apim.gateway.tests.sdk.configuration.GatewayMode;
 import io.gravitee.definition.model.ExecutionMode;
 import io.gravitee.policy.assigncontent.AssignContentPolicy;
 import io.gravitee.policy.assigncontent.configuration.AssignContentPolicyConfiguration;
@@ -60,7 +59,7 @@ class AssignContentPolicyV3IntegrationTest extends AbstractPolicyTest<AssignCont
         obs
             .assertComplete()
             .assertValue(response -> {
-                assertThat(response.toString()).isEqualTo("Response body built from header 'responseHeader': responseHeaderValue");
+                assertThat(response).hasToString("Response body built from header 'responseHeader': responseHeaderValue");
                 return true;
             })
             .assertNoErrors();

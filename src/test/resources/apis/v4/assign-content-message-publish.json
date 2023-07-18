@@ -5,7 +5,6 @@
     "definitionVersion": "4.0.0",
     "type": "message",
     "analytics": {},
-    "description": "Assign Message content",
     "listeners": [
         {
             "type": "http",

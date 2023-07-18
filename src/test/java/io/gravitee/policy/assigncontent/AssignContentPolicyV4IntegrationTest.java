@@ -19,7 +19,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -66,8 +65,8 @@ public class AssignContentPolicyV4IntegrationTest {
             obs
                 .assertComplete()
                 .assertValue(response -> {
-                    assertThat(response.toString())
-                        .isEqualTo(
+                    assertThat(response)
+                        .hasToString(
                             "Response body built from header 'responseHeader' and content: responseHeaderValue / " + responseFromBackend
                         );
                     return true;
@@ -87,7 +86,7 @@ public class AssignContentPolicyV4IntegrationTest {
 
         @Test
         @DisplayName("Should assign content on message body, using Freemarker")
-        void shouldAssignContentOnMessage(HttpClient client) throws Exception {
+        void shouldAssignContentOnMessage(HttpClient client) {
             client
                 .rxRequest(HttpMethod.GET, "/subscribe-assign-content")
                 .flatMap(request -> {
