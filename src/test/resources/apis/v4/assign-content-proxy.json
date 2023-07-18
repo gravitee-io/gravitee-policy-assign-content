@@ -1,76 +1,76 @@
 {
-  "id": "apiv4-assign-content-policy",
-  "name": "apiv4-assign-content-policy",
-  "description": "apiv4-assign-content-policy",
-  "definitionVersion": "4.0.0",
-  "type": "proxy",
-  "listeners": [
-    {
-      "type": "http",
-      "paths": [
+    "id": "apiv4-assign-content-policy",
+    "name": "apiv4-assign-content-policy",
+    "description": "apiv4-assign-content-policy",
+    "definitionVersion": "4.0.0",
+    "type": "proxy",
+    "listeners": [
         {
-          "path": "/test"
+            "type": "http",
+            "paths": [
+                {
+                    "path": "/test"
+                }
+            ],
+            "entrypoints": [
+                {
+                    "type": "http-proxy"
+                }
+            ]
         }
-      ],
-      "entrypoints": [
+    ],
+    "endpointGroups": [
         {
-          "type": "http-proxy"
+            "name": "default",
+            "type": "http-proxy",
+            "endpoints": [
+                {
+                    "name": "default-endpoint",
+                    "type": "http-proxy",
+                    "configuration": {
+                        "target": "http://localhost:8080/endpoint"
+                    }
+                }
+            ]
         }
-      ]
-    }
-  ],
-  "endpointGroups": [
-    {
-      "name": "default",
-      "type": "http-proxy",
-      "endpoints": [
+    ],
+    "flows": [
         {
-          "name": "default-endpoint",
-          "type": "http-proxy",
-          "configuration": {
-            "target": "http://localhost:8080/endpoint"
-          }
+            "name": "cache-flow",
+            "enabled": true,
+            "selectors": [
+                {
+                    "type": "http",
+                    "path": "/",
+                    "pathOperator": "STARTS_WITH"
+                }
+            ],
+            "request": [
+                {
+                    "name": "Assign Content",
+                    "description": "",
+                    "enabled": true,
+                    "policy": "policy-assign-content",
+                    "configuration": {
+                        "scope": "REQUEST",
+                        "body": "Request body built from header 'requestHeader' and content: ${request.headers['requestHeader'][0]}"
+                    }
+                }
+            ],
+            "response": [
+                {
+                    "name": "Assign Content",
+                    "description": "",
+                    "enabled": true,
+                    "policy": "policy-assign-content",
+                    "configuration": {
+                        "scope": "RESPONSE",
+                        "body": "Response body built from header 'responseHeader' and content: ${response.headers['responseHeader'][0]} / ${response.content}"
+                    }
+                }
+            ],
+            "subscribe": [],
+            "publish": []
         }
-      ]
-    }
-  ],
-  "flows": [
-    {
-      "name": "cache-flow",
-      "enabled": true,
-      "selectors": [
-        {
-          "type": "http",
-          "path": "/",
-          "pathOperator": "STARTS_WITH"
-        }
-      ],
-      "request": [
-        {
-          "name": "Assign Content",
-          "description": "",
-          "enabled": true,
-          "policy": "policy-assign-content",
-          "configuration": {
-            "scope": "REQUEST",
-            "body": "Request body built from header 'requestHeader' and content: ${request.headers['requestHeader'][0]}"
-          }
-        }
-      ],
-      "response": [
-        {
-          "name": "Assign Content",
-          "description": "",
-          "enabled": true,
-          "policy": "policy-assign-content",
-          "configuration": {
-            "scope": "RESPONSE",
-            "body": "Response body built from header 'responseHeader' and content: ${response.headers['responseHeader'][0]} / ${response.content}"
-          }
-        }
-      ],
-      "subscribe": [],
-      "publish": []
-    }
-  ]
+    ]
 }

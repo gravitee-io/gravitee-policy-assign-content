@@ -1,55 +1,53 @@
 {
-  "id": "my-api",
-  "name": "my-api",
-  "gravitee": "2.0.0",
-  "proxy": {
-    "context_path": "/test",
-    "endpoints": [
-      {
-        "name": "default",
-        "target": "http://localhost:8080/endpoint",
-        "http": {
-          "connectTimeout": 3000,
-          "readTimeout": 60000
+    "id": "my-api",
+    "name": "my-api",
+    "gravitee": "2.0.0",
+    "proxy": {
+        "context_path": "/test",
+        "endpoints": [
+            {
+                "name": "default",
+                "target": "http://localhost:8080/endpoint",
+                "http": {
+                    "connectTimeout": 3000,
+                    "readTimeout": 60000
+                }
+            }
+        ]
+    },
+    "flows": [
+        {
+            "name": "flow-1",
+            "methods": ["GET"],
+            "enabled": true,
+            "path-operator": {
+                "path": "/",
+                "operator": "STARTS_WITH"
+            },
+            "pre": [
+                {
+                    "name": "Assign Content",
+                    "description": "",
+                    "enabled": true,
+                    "policy": "policy-assign-content",
+                    "configuration": {
+                        "scope": "REQUEST",
+                        "body": "Request body built from header 'requestHeader': ${request.headers['requestHeader'][0]}"
+                    }
+                }
+            ],
+            "post": [
+                {
+                    "name": "Assign Content",
+                    "description": "",
+                    "enabled": true,
+                    "policy": "policy-assign-content",
+                    "configuration": {
+                        "scope": "RESPONSE",
+                        "body": "Response body built from header 'responseHeader': ${response.headers['responseHeader'][0]}"
+                    }
+                }
+            ]
         }
-      }
     ]
-  },
-  "flows": [
-    {
-      "name": "flow-1",
-      "methods": [
-        "GET"
-      ],
-      "enabled": true,
-      "path-operator": {
-        "path": "/",
-        "operator": "STARTS_WITH"
-      },
-      "pre": [
-        {
-          "name": "Assign Content",
-          "description": "",
-          "enabled": true,
-          "policy": "policy-assign-content",
-          "configuration": {
-            "scope": "REQUEST",
-            "body": "Request body built from header 'requestHeader': ${request.headers['requestHeader'][0]}"
-          }
-        }
-      ],
-      "post": [
-        {
-          "name": "Assign Content",
-          "description": "",
-          "enabled": true,
-          "policy": "policy-assign-content",
-          "configuration": {
-            "scope": "RESPONSE",
-            "body": "Response body built from header 'responseHeader': ${response.headers['responseHeader'][0]}"
-          }
-        }
-      ]
-    }
-  ]
 }
