@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/gravitee-io/gravitee-policy-assign-content/compare/2.0.0...2.0.1) (2023-07-20)
+
+
+### Bug Fixes
+
+* update policy description ([1c96896](https://github.com/gravitee-io/gravitee-policy-assign-content/commit/1c96896ee524086da1f79599ec31dbdf61ac4db3))
+
 # [2.0.0](https://github.com/gravitee-io/gravitee-policy-assign-content/compare/1.7.0...2.0.0) (2023-07-18)
 
 
