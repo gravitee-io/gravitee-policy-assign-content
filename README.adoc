@@ -22,7 +22,7 @@ endif::[]
 
 == Description
 
-You can use the `assign-content` policy to change or transform the content of the request body or response body.
+You can use the `assign-content` policy to change or transform the content of the request/response body or message.
 
 This policy is compatible with the https://freemarker.apache.org[Freemarker^] template engine, which allows you to apply
 complex transformations, such as transforming from XML to JSON and vice versa.
@@ -35,9 +35,9 @@ attributes and more.
 |===
 |Plugin version | APIM version
 
-| 2.x          | 4.0.x to latest
-| 1.7.x          | 3.10.x to 3.20.x
-| Up to 1.6.x             | Up to 3.9.x
+| Up to 1.6.x   | Up to 3.9.x
+| 1.7.x         | 3.10.x to 3.20.x
+| 2.x           | 4.0 to latest
 |===
 
 == Configuration
