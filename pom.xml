@@ -45,7 +45,7 @@
         <gravitee-entrypoint-http-post.version>1.0.0</gravitee-entrypoint-http-post.version>
         <gravitee-reactor-message.version>1.0.1</gravitee-reactor-message.version>
 
-        <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
+        <maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
         <!-- Property used by the publication job in CI-->
         <publish-folder-path>graviteeio-apim/plugins/policies</publish-folder-path>
     </properties>
