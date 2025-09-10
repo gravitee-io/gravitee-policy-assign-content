@@ -39,7 +39,7 @@
         <gravitee-bom.version>6.0.62</gravitee-bom.version>
         <gravitee-gateway-api.version>3.0.0</gravitee-gateway-api.version>
         <gravitee-policy-api.version>1.11.0</gravitee-policy-api.version>
-        <freemarker.version>2.3.32</freemarker.version>
+        <freemarker.version>2.3.34</freemarker.version>
 
         <gravitee-entrypoint-sse.version>4.0.0</gravitee-entrypoint-sse.version>
         <gravitee-entrypoint-http-post.version>1.0.0</gravitee-entrypoint-http-post.version>
