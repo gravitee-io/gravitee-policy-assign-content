@@ -65,17 +65,17 @@ public class AssignContentPolicyV4IntegrationTest {
             obs
                 .assertComplete()
                 .assertValue(response -> {
-                    assertThat(response)
-                        .hasToString(
-                            "Response body built from header 'responseHeader' and content: responseHeaderValue / " + responseFromBackend
-                        );
+                    assertThat(response).hasToString(
+                        "Response body built from header 'responseHeader' and content: responseHeaderValue / " + responseFromBackend
+                    );
                     return true;
                 })
                 .assertNoErrors();
 
             wiremock.verify(
-                getRequestedFor(urlPathEqualTo("/endpoint"))
-                    .withRequestBody(equalTo("Request body built from header 'requestHeader' and content: requestHeaderValue"))
+                getRequestedFor(urlPathEqualTo("/endpoint")).withRequestBody(
+                    equalTo("Request body built from header 'requestHeader' and content: requestHeaderValue")
+                )
             );
         }
     }
@@ -104,7 +104,7 @@ public class AssignContentPolicyV4IntegrationTest {
                         .contains("event: message")
                         .contains(
                             "data: " +
-                            "Body built from message header 'msgHeader' and content: messageHeaderValue / Content Sent by Mock policy"
+                                "Body built from message header 'msgHeader' and content: messageHeaderValue / Content Sent by Mock policy"
                         );
                     return true;
                 });
@@ -140,8 +140,9 @@ public class AssignContentPolicyV4IntegrationTest {
                 .subject()
                 .test()
                 .assertValue(message -> {
-                    assertThat(message.content())
-                        .hasToString("Body built from message header 'msgHeader' and content: headerValue / Content Sent to Mock policy");
+                    assertThat(message.content()).hasToString(
+                        "Body built from message header 'msgHeader' and content: headerValue / Content Sent to Mock policy"
+                    );
                     return true;
                 })
                 .dispose();

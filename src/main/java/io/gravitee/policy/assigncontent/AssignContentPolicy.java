@@ -83,7 +83,9 @@ public class AssignContentPolicy extends AssignContentPolicyV3 implements Policy
                 log.debug("Unable to assign body content", ioe);
                 return ctx.interruptBodyWith(
                     new ExecutionFailure(HttpStatusCode.INTERNAL_SERVER_ERROR_500)
-                        .message("Unable to assign body content: " + ioe.getMessage())
+                        .key("ASSIGN_CONTENT_ERROR")
+                        .message("Unable to assign body content")
+                        .cause(ioe)
                 );
             });
     }
@@ -114,22 +116,21 @@ public class AssignContentPolicy extends AssignContentPolicyV3 implements Policy
     }
 
     private Maybe<Message> assignMessageContent(MessageExecutionContext ctx, Message msg) {
-        return Maybe
-            .fromCallable(() -> {
-                Template template = getTemplate(configuration.getBody());
-                StringWriter writer = new StringWriter();
-                Map<String, Object> model = new HashMap<>();
-                model.put("message", new EvaluableMessage(msg));
-                model.put("context", new AttributesBasedExecutionContext(ctx));
-                template.process(model, writer);
-                return msg.content(Buffer.buffer(writer.toString()));
-            })
-            .onErrorResumeNext(err -> {
-                log.debug("Unable to assign message content", err);
-                return ctx.interruptMessageWith(
-                    new ExecutionFailure(HttpStatusCode.INTERNAL_SERVER_ERROR_500)
-                        .message("Unable to assign message content: " + err.getMessage())
-                );
-            });
+        return Maybe.fromCallable(() -> {
+            Template template = getTemplate(configuration.getBody());
+            StringWriter writer = new StringWriter();
+            Map<String, Object> model = new HashMap<>();
+            model.put("message", new EvaluableMessage(msg));
+            model.put("context", new AttributesBasedExecutionContext(ctx));
+            template.process(model, writer);
+            return msg.content(Buffer.buffer(writer.toString()));
+        }).onErrorResumeNext(err -> {
+            log.debug("Unable to assign message content", err);
+            return ctx.interruptMessageWith(
+                new ExecutionFailure(HttpStatusCode.INTERNAL_SERVER_ERROR_500)
+                    .message("Unable to assign message content: " + err.getMessage())
+                    .cause(err)
+            );
+        });
     }
 }

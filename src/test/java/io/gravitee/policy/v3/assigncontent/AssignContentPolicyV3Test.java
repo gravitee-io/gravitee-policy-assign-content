@@ -168,19 +168,18 @@ public class AssignContentPolicyV3Test {
 
     @Test
     public void shouldNotContinueRequestStreaming_apiDisabled() {
-        when(configuration.getBody())
-            .thenReturn(
-                """
-                            <#assign uri=object?api.class.getResource("/").toURI()>
-                            <#assign input=uri?api.create("file:///etc/passwd").toURL().openConnection()>
-                            <#assign is=input?api.getInputStream()>
-                                        FILE:[<#list 0..999999999 as _>
-                                <#assign byte=is.read()>
-                                <#if byte == -1>
-                                    <#break>
-                                </#if>
-                                ${byte}, </#list>]"""
-            );
+        when(configuration.getBody()).thenReturn(
+            """
+            <#assign uri=object?api.class.getResource("/").toURI()>
+            <#assign input=uri?api.create("file:///etc/passwd").toURL().openConnection()>
+            <#assign is=input?api.getInputStream()>
+                        FILE:[<#list 0..999999999 as _>
+                <#assign byte=is.read()>
+                <#if byte == -1>
+                    <#break>
+                </#if>
+                ${byte}, </#list>]"""
+        );
         when(configuration.getScope()).thenReturn(PolicyScope.REQUEST);
 
         Buffer buffer = factory.buffer("{\"name\":1}");

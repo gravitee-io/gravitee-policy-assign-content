@@ -65,8 +65,9 @@ class AssignContentPolicyV3IntegrationTest extends AbstractPolicyTest<AssignCont
             .assertNoErrors();
 
         wiremock.verify(
-            getRequestedFor(urlPathEqualTo("/endpoint"))
-                .withRequestBody(equalTo("Request body built from header 'requestHeader': requestHeaderValue"))
+            getRequestedFor(urlPathEqualTo("/endpoint")).withRequestBody(
+                equalTo("Request body built from header 'requestHeader': requestHeaderValue")
+            )
         );
     }
 }
