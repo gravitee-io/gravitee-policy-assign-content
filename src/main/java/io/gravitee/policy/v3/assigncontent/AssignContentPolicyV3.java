@@ -66,8 +66,7 @@ public class AssignContentPolicyV3 {
     @OnRequestContent
     public ReadWriteStream<Buffer> onRequestContent(Request request, ExecutionContext executionContext, PolicyChain policyChain) {
         if (configuration.getScope() == PolicyScope.REQUEST) {
-            return TransformableRequestStreamBuilder
-                .on(request)
+            return TransformableRequestStreamBuilder.on(request)
                 .chain(policyChain)
                 .transform(buffer -> {
                     try {
@@ -91,8 +90,7 @@ public class AssignContentPolicyV3 {
     @OnResponseContent
     public ReadWriteStream<Buffer> onResponseContent(Response response, ExecutionContext executionContext, PolicyChain policyChain) {
         if (configuration.getScope() == PolicyScope.RESPONSE) {
-            return TransformableResponseStreamBuilder
-                .on(response)
+            return TransformableResponseStreamBuilder.on(response)
                 .chain(policyChain)
                 .transform(buffer -> {
                     try {
