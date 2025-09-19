@@ -1,3 +1,15 @@
+# [3.0.0](https://github.com/gravitee-io/gravitee-policy-assign-content/compare/2.0.1...3.0.0) (2025-09-19)
+
+
+### Features
+
+* include cause throwable in the execution failure ([94748b1](https://github.com/gravitee-io/gravitee-policy-assign-content/commit/94748b11d312955217aefb19478d754ffb817e97))
+
+
+### BREAKING CHANGES
+
+* requires APIM version 4.9.0 or later
+
 ## [2.0.1](https://github.com/gravitee-io/gravitee-policy-assign-content/compare/2.0.0...2.0.1) (2023-07-20)
 
 
