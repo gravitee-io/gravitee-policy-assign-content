@@ -34,7 +34,7 @@
     </parent>
 
     <properties>
-        <gravitee-apim.version>4.9.2</gravitee-apim.version>
+        <gravitee-apim.version>4.9.3</gravitee-apim.version>
         <gravitee-policy-api.version>1.11.0</gravitee-policy-api.version>
         <freemarker.version>2.3.32</freemarker.version>
 
