@@ -15,7 +15,7 @@
  */
 package io.gravitee.policy.assigncontent.utils;
 
-import io.gravitee.gateway.reactive.api.context.GenericExecutionContext;
+import io.gravitee.gateway.reactive.api.context.base.BaseExecutionContext;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,10 +26,10 @@ import java.util.Map;
 public class AttributesBasedExecutionContext {
 
     private static final String CONTEXT_DICTIONARIES_VARIABLE = "dictionaries";
-    private final GenericExecutionContext context;
+    private final BaseExecutionContext context;
     private final Map<String, Object> attributes = new AttributeMap();
 
-    public AttributesBasedExecutionContext(final GenericExecutionContext context) {
+    public AttributesBasedExecutionContext(final BaseExecutionContext context) {
         this.context = context;
     }
 
