@@ -22,13 +22,17 @@ import io.gravitee.gateway.api.buffer.Buffer;
 import io.gravitee.gateway.api.http.HttpHeaderNames;
 import io.gravitee.gateway.api.http.HttpHeaders;
 import io.gravitee.gateway.reactive.api.ExecutionFailure;
-import io.gravitee.gateway.reactive.api.context.HttpExecutionContext;
-import io.gravitee.gateway.reactive.api.context.MessageExecutionContext;
+import io.gravitee.gateway.reactive.api.context.base.BaseExecutionContext;
+import io.gravitee.gateway.reactive.api.context.http.HttpMessageExecutionContext;
+import io.gravitee.gateway.reactive.api.context.http.HttpPlainExecutionContext;
+import io.gravitee.gateway.reactive.api.context.kafka.KafkaMessageExecutionContext;
 import io.gravitee.gateway.reactive.api.el.EvaluableMessage;
 import io.gravitee.gateway.reactive.api.el.EvaluableRequest;
 import io.gravitee.gateway.reactive.api.el.EvaluableResponse;
 import io.gravitee.gateway.reactive.api.message.Message;
-import io.gravitee.gateway.reactive.api.policy.Policy;
+import io.gravitee.gateway.reactive.api.message.kafka.KafkaMessage;
+import io.gravitee.gateway.reactive.api.policy.http.HttpPolicy;
+import io.gravitee.gateway.reactive.api.policy.kafka.KafkaPolicy;
 import io.gravitee.policy.assigncontent.configuration.AssignContentPolicyConfiguration;
 import io.gravitee.policy.assigncontent.utils.AttributesBasedExecutionContext;
 import io.gravitee.policy.v3.assigncontent.AssignContentPolicyV3;
@@ -38,10 +42,11 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class AssignContentPolicy extends AssignContentPolicyV3 implements Policy {
+public class AssignContentPolicy extends AssignContentPolicyV3 implements HttpPolicy, KafkaPolicy {
 
     public static final String PLUGIN_ID = "policy-assign-content";
 
@@ -55,16 +60,16 @@ public class AssignContentPolicy extends AssignContentPolicyV3 implements Policy
     }
 
     @Override
-    public Completable onRequest(HttpExecutionContext ctx) {
+    public Completable onRequest(HttpPlainExecutionContext ctx) {
         return ctx.request().onBody(body -> assignBodyContent(ctx, ctx.request().headers(), body, true));
     }
 
     @Override
-    public Completable onResponse(HttpExecutionContext ctx) {
+    public Completable onResponse(HttpPlainExecutionContext ctx) {
         return ctx.response().onBody(body -> assignBodyContent(ctx, ctx.response().headers(), body, false));
     }
 
-    private Maybe<Buffer> assignBodyContent(HttpExecutionContext ctx, HttpHeaders httpHeaders, Maybe<Buffer> body, boolean isRequest) {
+    private Maybe<Buffer> assignBodyContent(HttpPlainExecutionContext ctx, HttpHeaders httpHeaders, Maybe<Buffer> body, boolean isRequest) {
         return body
             .flatMap(content -> {
                 var writer = replaceContent(isRequest, ctx, content.toString());
@@ -90,7 +95,8 @@ public class AssignContentPolicy extends AssignContentPolicyV3 implements Policy
             });
     }
 
-    private StringWriter replaceContent(boolean isRequest, HttpExecutionContext ctx, String content) throws IOException, TemplateException {
+    private StringWriter replaceContent(boolean isRequest, HttpPlainExecutionContext ctx, String content)
+        throws IOException, TemplateException {
         Template template = getTemplate(configuration.getBody());
         StringWriter writer = new StringWriter();
         Map<String, Object> model = new HashMap<>();
@@ -106,31 +112,55 @@ public class AssignContentPolicy extends AssignContentPolicyV3 implements Policy
     }
 
     @Override
-    public Completable onMessageRequest(MessageExecutionContext ctx) {
+    public Completable onMessageRequest(HttpMessageExecutionContext ctx) {
         return ctx.request().onMessage(msg -> assignMessageContent(ctx, msg));
     }
 
     @Override
-    public Completable onMessageResponse(MessageExecutionContext ctx) {
+    public Completable onMessageResponse(HttpMessageExecutionContext ctx) {
         return ctx.response().onMessage(msg -> assignMessageContent(ctx, msg));
     }
 
-    private Maybe<Message> assignMessageContent(MessageExecutionContext ctx, Message msg) {
-        return Maybe.fromCallable(() -> {
-            Template template = getTemplate(configuration.getBody());
-            StringWriter writer = new StringWriter();
-            Map<String, Object> model = new HashMap<>();
-            model.put("message", new EvaluableMessage(msg));
-            model.put("context", new AttributesBasedExecutionContext(ctx));
-            template.process(model, writer);
-            return msg.content(Buffer.buffer(writer.toString()));
-        }).onErrorResumeNext(err -> {
+    @Override
+    public Completable onMessageRequest(KafkaMessageExecutionContext ctx) {
+        return ctx.request().onMessage(message -> assignMessageContent(ctx, message));
+    }
+
+    @Override
+    public Completable onMessageResponse(KafkaMessageExecutionContext ctx) {
+        return ctx.response().onMessage(msg -> assignMessageContent(ctx, msg));
+    }
+
+    @SneakyThrows
+    private Maybe<KafkaMessage> assignMessageContent(KafkaMessageExecutionContext ctx, KafkaMessage message) {
+        return Maybe.just((KafkaMessage) getMessage(ctx, message));
+    }
+
+    private Maybe<Message> assignMessageContent(BaseExecutionContext ctx, Message msg) {
+        return Maybe.fromCallable(() -> getMessage(ctx, msg)).onErrorResumeNext(err -> {
             log.debug("Unable to assign message content", err);
-            return ctx.interruptMessageWith(
-                new ExecutionFailure(HttpStatusCode.INTERNAL_SERVER_ERROR_500)
-                    .message("Unable to assign message content: " + err.getMessage())
-                    .cause(err)
-            );
+            if (ctx instanceof HttpMessageExecutionContext httpContext) {
+                return httpContext.interruptMessageWith(
+                    new ExecutionFailure(HttpStatusCode.INTERNAL_SERVER_ERROR_500)
+                        .message("Unable to assign message content: " + err.getMessage())
+                        .cause(err)
+                );
+            } else if (ctx instanceof KafkaMessageExecutionContext kafkaContext) {
+                return Maybe.fromCompletable(
+                    kafkaContext.executionContext().interruptWith(org.apache.kafka.common.protocol.Errors.UNKNOWN_SERVER_ERROR)
+                );
+            }
+            return Maybe.empty();
         });
+    }
+
+    private Message getMessage(BaseExecutionContext ctx, Message msg) throws IOException, TemplateException {
+        Template template = getTemplate(configuration.getBody());
+        StringWriter writer = new StringWriter();
+        Map<String, Object> model = new HashMap<>();
+        model.put("message", new EvaluableMessage(msg));
+        model.put("context", new AttributesBasedExecutionContext(ctx));
+        template.process(model, writer);
+        return msg.content(Buffer.buffer(writer.toString()));
     }
 }
