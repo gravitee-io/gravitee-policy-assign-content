@@ -1,3 +1,10 @@
+# [3.1.0](https://github.com/gravitee-io/gravitee-policy-assign-content/compare/3.0.0...3.1.0) (2025-12-22)
+
+
+### Features
+
+* kafka native ([f6545de](https://github.com/gravitee-io/gravitee-policy-assign-content/commit/f6545deafaef750a7420c2ec0ae52b439336cb56))
+
 # [3.0.0](https://github.com/gravitee-io/gravitee-policy-assign-content/compare/2.0.1...3.0.0) (2025-09-19)
 
 
