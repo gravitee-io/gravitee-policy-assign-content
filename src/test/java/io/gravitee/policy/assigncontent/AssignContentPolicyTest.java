@@ -15,9 +15,12 @@
  */
 package io.gravitee.policy.assigncontent;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import io.gravitee.el.TemplateContext;
+import io.gravitee.el.TemplateEngine;
 import io.gravitee.gateway.reactive.api.context.kafka.KafkaMessageExecutionContext;
 import io.gravitee.gateway.reactive.api.message.kafka.KafkaMessage;
 import io.gravitee.policy.assigncontent.configuration.AssignContentPolicyConfiguration;
@@ -30,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import test.stub.EvaluableKafkaMessageStub;
 import test.stub.KafkaMessageRequestStub;
 import test.stub.KafkaMessageResponseStub;
 import test.stub.KafkaMessageStub;
@@ -49,6 +53,14 @@ public class AssignContentPolicyTest {
             KafkaMessageExecutionContext ctx = mock(KafkaMessageExecutionContext.class);
             final KafkaMessageRequestStub request = new KafkaMessageRequestStub();
             when(ctx.request()).thenReturn(request);
+            when(ctx.getTemplateEngine(any(KafkaMessage.class))).thenAnswer(invocation -> {
+                KafkaMessage msg = invocation.getArgument(0);
+                TemplateEngine engine = mock(TemplateEngine.class);
+                TemplateContext templateContext = mock(TemplateContext.class);
+                when(engine.getTemplateContext()).thenReturn(templateContext);
+                when(templateContext.lookupVariable("message")).thenReturn(new EvaluableKafkaMessageStub(msg));
+                return engine;
+            });
 
             List<KafkaMessage> messages = new ArrayList<>();
             for (int i = 0; i < recordsCount; i++) {
@@ -92,6 +104,14 @@ public class AssignContentPolicyTest {
             KafkaMessageExecutionContext ctx = mock(KafkaMessageExecutionContext.class);
             final KafkaMessageResponseStub response = new KafkaMessageResponseStub();
             when(ctx.response()).thenReturn(response);
+            when(ctx.getTemplateEngine(any(KafkaMessage.class))).thenAnswer(invocation -> {
+                KafkaMessage msg = invocation.getArgument(0);
+                TemplateEngine engine = mock(TemplateEngine.class);
+                TemplateContext templateContext = mock(TemplateContext.class);
+                when(engine.getTemplateContext()).thenReturn(templateContext);
+                when(templateContext.lookupVariable("message")).thenReturn(new EvaluableKafkaMessageStub(msg));
+                return engine;
+            });
 
             List<KafkaMessage> messages = new ArrayList<>();
             for (int i = 0; i < recordsCount; i++) {

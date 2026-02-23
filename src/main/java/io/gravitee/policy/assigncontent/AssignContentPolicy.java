@@ -49,6 +49,10 @@ import lombok.extern.slf4j.Slf4j;
 public class AssignContentPolicy extends AssignContentPolicyV3 implements HttpPolicy, KafkaPolicy {
 
     public static final String PLUGIN_ID = "policy-assign-content";
+    private static final String MESSAGE_VARIABLE_NAME = "message";
+    private static final String CONTEXT_VARIABLE_NAME = "context";
+    private static final String REQUEST_VARIABLE_NAME = "request";
+    private static final String RESPONSE_VARIABLE_NAME = "response";
 
     public AssignContentPolicy(AssignContentPolicyConfiguration configuration) {
         super(configuration);
@@ -101,12 +105,12 @@ public class AssignContentPolicy extends AssignContentPolicyV3 implements HttpPo
         StringWriter writer = new StringWriter();
         Map<String, Object> model = new HashMap<>();
         if (isRequest) {
-            model.put("request", new EvaluableRequest(ctx.request(), content));
+            model.put(REQUEST_VARIABLE_NAME, new EvaluableRequest(ctx.request(), content));
         } else {
-            model.put("request", new EvaluableRequest(ctx.request()));
-            model.put("response", new EvaluableResponse(ctx.response(), content));
+            model.put(REQUEST_VARIABLE_NAME, new EvaluableRequest(ctx.request()));
+            model.put(RESPONSE_VARIABLE_NAME, new EvaluableResponse(ctx.response(), content));
         }
-        model.put("context", new AttributesBasedExecutionContext(ctx));
+        model.put(CONTEXT_VARIABLE_NAME, new AttributesBasedExecutionContext(ctx));
         template.process(model, writer);
         return writer;
     }
@@ -133,7 +137,13 @@ public class AssignContentPolicy extends AssignContentPolicyV3 implements HttpPo
 
     @SneakyThrows
     private Maybe<KafkaMessage> assignMessageContent(KafkaMessageExecutionContext ctx, KafkaMessage message) {
-        return Maybe.just((KafkaMessage) getMessage(ctx, message));
+        Template template = getTemplate(configuration.getBody());
+        StringWriter writer = new StringWriter();
+        Map<String, Object> model = new HashMap<>();
+        model.put(MESSAGE_VARIABLE_NAME, ctx.getTemplateEngine(message).getTemplateContext().lookupVariable(MESSAGE_VARIABLE_NAME));
+        model.put(CONTEXT_VARIABLE_NAME, new AttributesBasedExecutionContext(ctx));
+        template.process(model, writer);
+        return Maybe.just((KafkaMessage) message.content(Buffer.buffer(writer.toString())));
     }
 
     private Maybe<Message> assignMessageContent(BaseExecutionContext ctx, Message msg) {
@@ -158,8 +168,8 @@ public class AssignContentPolicy extends AssignContentPolicyV3 implements HttpPo
         Template template = getTemplate(configuration.getBody());
         StringWriter writer = new StringWriter();
         Map<String, Object> model = new HashMap<>();
-        model.put("message", new EvaluableMessage(msg));
-        model.put("context", new AttributesBasedExecutionContext(ctx));
+        model.put(MESSAGE_VARIABLE_NAME, new EvaluableMessage(msg));
+        model.put(CONTEXT_VARIABLE_NAME, new AttributesBasedExecutionContext(ctx));
         template.process(model, writer);
         return msg.content(Buffer.buffer(writer.toString()));
     }
