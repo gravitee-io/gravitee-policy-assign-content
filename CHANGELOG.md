@@ -1,3 +1,10 @@
+## [3.1.1](https://github.com/gravitee-io/gravitee-policy-assign-content/compare/3.1.0...3.1.1) (2026-02-24)
+
+
+### Bug Fixes
+
+* support message.topic for Kafka native ([9acc321](https://github.com/gravitee-io/gravitee-policy-assign-content/commit/9acc321bbb2f86a92f648c267bb65f6560afced1))
+
 # [3.1.0](https://github.com/gravitee-io/gravitee-policy-assign-content/compare/3.0.0...3.1.0) (2025-12-22)
 
 
