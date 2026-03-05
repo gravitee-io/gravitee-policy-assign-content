@@ -42,10 +42,10 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.CustomLog;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+@CustomLog
 public class AssignContentPolicy extends AssignContentPolicyV3 implements HttpPolicy, KafkaPolicy {
 
     public static final String PLUGIN_ID = "policy-assign-content";
@@ -89,7 +89,7 @@ public class AssignContentPolicy extends AssignContentPolicyV3 implements HttpPo
             )
             .doOnSuccess(buffer -> httpHeaders.set(HttpHeaderNames.CONTENT_LENGTH, Integer.toString(buffer.length())))
             .onErrorResumeNext(ioe -> {
-                log.debug("Unable to assign body content", ioe);
+                ctx.withLogger(log).debug("Unable to assign body content", ioe);
                 return ctx.interruptBodyWith(
                     new ExecutionFailure(HttpStatusCode.INTERNAL_SERVER_ERROR_500)
                         .key("ASSIGN_CONTENT_ERROR")
@@ -148,7 +148,7 @@ public class AssignContentPolicy extends AssignContentPolicyV3 implements HttpPo
 
     private Maybe<Message> assignMessageContent(BaseExecutionContext ctx, Message msg) {
         return Maybe.fromCallable(() -> getMessage(ctx, msg)).onErrorResumeNext(err -> {
-            log.debug("Unable to assign message content", err);
+            ctx.withLogger(log).debug("Unable to assign message content", err);
             if (ctx instanceof HttpMessageExecutionContext httpContext) {
                 return httpContext.interruptMessageWith(
                     new ExecutionFailure(HttpStatusCode.INTERNAL_SERVER_ERROR_500)
