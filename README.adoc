@@ -38,7 +38,8 @@ attributes and more.
 | Up to 1.6.x   | Up to 3.9.x
 | 1.7.x         | 3.10.x to 3.20.x
 | 2.x           | 4.0.x to 4.8.x
-| 3.x           | 4.9.x to latest
+| 3.x           | 4.9.x to 4.10.x
+| 4.x           | 4.11.x
 |===
 
 == Configuration
