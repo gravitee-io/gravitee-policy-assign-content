@@ -42,7 +42,6 @@
         <gravitee-entrypoint-http-post.version>1.0.0</gravitee-entrypoint-http-post.version>
         <gravitee-reactor-message.version>8.0.0</gravitee-reactor-message.version>
 
-        <maven-assembly-plugin.version>3.8.0</maven-assembly-plugin.version>
         <!-- Property used by the publication job in CI-->
         <publish-folder-path>graviteeio-apim/plugins/policies</publish-folder-path>
     </properties>
@@ -213,7 +212,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>${maven-assembly-plugin.version}</version>
                 <configuration>
                     <appendAssemblyId>false</appendAssemblyId>
                     <descriptors>
