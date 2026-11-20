@@ -1,3 +1,10 @@
+## [3.1.3](https://github.com/gravitee-io/gravitee-policy-assign-content/compare/3.1.2...3.1.3) (2026-11-20)
+
+
+### Bug Fixes
+
+* **deps:** bump freemarker to 2.3.35 ([7a2d8f6](https://github.com/gravitee-io/gravitee-policy-assign-content/commit/7a2d8f67e581ce54da222369389df2c33db974a0))
+
 ## [3.1.2](https://github.com/gravitee-io/gravitee-policy-assign-content/compare/3.1.1...3.1.2) (2026-11-20)
 
 
