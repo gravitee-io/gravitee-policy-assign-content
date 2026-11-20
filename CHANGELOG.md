@@ -1,3 +1,10 @@
+## [3.1.2](https://github.com/gravitee-io/gravitee-policy-assign-content/compare/3.1.1...3.1.2) (2026-11-20)
+
+
+### Bug Fixes
+
+* **freemarker:** harden template sandbox against reflection-based escapes ([9d79770](https://github.com/gravitee-io/gravitee-policy-assign-content/commit/9d797702d73c7df583004cf8c08b91e6cf32af5f))
+
 ## [3.1.1](https://github.com/gravitee-io/gravitee-policy-assign-content/compare/3.1.0...3.1.1) (2026-02-24)
 
 
